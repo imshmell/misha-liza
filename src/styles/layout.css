@@ -175,7 +175,7 @@ body{ background: var(--cream); color: var(--wine-deep); font-family: var(--font
 .ticket-dest{ font-family: var(--font-display); font-style: italic; font-size: 34px; line-height: 1; }
 /* билет на поезд под плёнкой: заходит на ленту снизу, перфорация между корешком и треком */
 .kazan-ticket{
-  position: relative; z-index: 5; align-self: center; margin-top: -3.2vh; width: min(78vw, 1320px);
+  position: relative; z-index: 5; align-self: center; margin-top: 4.5vh; width: min(78vw, 1320px);
   display: grid; grid-template-columns: auto 1fr minmax(360px, 30%); align-items: center; gap: 0;
   background: #F3E3DD; color: var(--wine-deep); transform: rotate(-.8deg);
   box-shadow: 0 24px 50px -10px rgba(0,0,0,.6);
