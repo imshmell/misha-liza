@@ -1,0 +1,141 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+@plugin "daisyui";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --font-heading: var(--font-display);
+    --font-sans: 'Cormorant Garamond', serif;
+    --font-display: 'Playfair Display', serif;
+    --font-script: 'Caveat', cursive;
+    --font-brush: 'Mrs Saint Delafield', cursive; /* только латиница (Book of Love) — кириллицу не поддерживает */
+    --font-brush-ru: 'Marck Script', cursive;     /* кириллические росчерки — "Люблю тебя" и т.п. */
+    --font-serif-caps: 'EB Garamond', serif;
+
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+
+    --color-paper: var(--paper);
+    --color-paper-2: var(--paper-2);
+    --color-blush: var(--blush);
+    --color-burgundy: var(--burgundy);
+    --color-burgundy-dark: var(--burgundy-dark);
+    --color-burgundy-light: var(--burgundy-light);
+    --color-gold: var(--gold);
+    --color-cream: var(--cream);
+
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+}
+
+:root {
+    /* бренд-палитра: точный бордовый заказчицы #551515 (PANTONE 4975 C) */
+    --paper: #f1e9d8;
+    --paper-2: #e9ddc5;
+    --blush: #f3e3dd;
+    --burgundy: #551515;
+    --burgundy-dark: #330d0d;
+    --burgundy-light: #7a2626;
+    --gold: #a8803f;
+    --cream: #f6ece0;
+    --ink: #2a1a16;
+    --ink-soft: #4a332d;
+    --red: #c21807;
+
+    --background: var(--paper);
+    --foreground: #2a1a16;
+    --card: var(--cream);
+    --card-foreground: #2a1a16;
+    --popover: var(--cream);
+    --popover-foreground: #2a1a16;
+    --primary: var(--burgundy);
+    --primary-foreground: var(--cream);
+    --secondary: var(--paper-2);
+    --secondary-foreground: #2a1a16;
+    --muted: var(--paper-2);
+    --muted-foreground: #4a332d;
+    --accent: var(--blush);
+    --accent-foreground: var(--burgundy);
+    --destructive: oklch(0.577 0.245 27.325);
+    --border: color-mix(in oklch, var(--burgundy) 20%, transparent);
+    --input: color-mix(in oklch, var(--burgundy) 25%, transparent);
+    --ring: var(--burgundy);
+    --radius: 0.4rem;
+    --sidebar: var(--paper);
+    --sidebar-foreground: #2a1a16;
+    --sidebar-primary: var(--burgundy);
+    --sidebar-primary-foreground: var(--cream);
+    --sidebar-accent: var(--blush);
+    --sidebar-accent-foreground: var(--burgundy);
+    --sidebar-border: color-mix(in oklch, var(--burgundy) 20%, transparent);
+    --sidebar-ring: var(--burgundy);
+}
+
+.dark {
+    --background: var(--burgundy-dark);
+    --foreground: var(--cream);
+    --card: var(--burgundy);
+    --card-foreground: var(--cream);
+    --popover: var(--burgundy);
+    --popover-foreground: var(--cream);
+    --primary: var(--cream);
+    --primary-foreground: var(--burgundy-dark);
+    --secondary: var(--burgundy-light);
+    --secondary-foreground: var(--cream);
+    --muted: var(--burgundy-light);
+    --muted-foreground: color-mix(in oklch, var(--cream) 70%, transparent);
+    --accent: var(--burgundy-light);
+    --accent-foreground: var(--cream);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: color-mix(in oklch, var(--cream) 12%, transparent);
+    --input: color-mix(in oklch, var(--cream) 16%, transparent);
+    --ring: var(--gold);
+    --sidebar: var(--burgundy-dark);
+    --sidebar-foreground: var(--cream);
+    --sidebar-primary: var(--gold);
+    --sidebar-primary-foreground: var(--burgundy-dark);
+    --sidebar-accent: var(--burgundy-light);
+    --sidebar-accent-foreground: var(--cream);
+    --sidebar-border: color-mix(in oklch, var(--cream) 12%, transparent);
+    --sidebar-ring: var(--gold);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground;
+    }
+  html {
+    @apply font-sans;
+    }
+}

@@ -1,0 +1,36 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# оригиналы медиа (тяжёлые, не для деплоя)
+source-media/
+
+# личные материалы и рабочие заметки — в публичный репозиторий не идут
+inbox/
+references/
+legacy-static/
+figma-prompt.txt
+CLAUDE.md
+LOG.md
+BACKLOG.md
