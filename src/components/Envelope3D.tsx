@@ -84,14 +84,26 @@ function heartPath(g: CanvasRenderingContext2D, cx: number, cy: number, s: numbe
   g.closePath();
 }
 
-type Props = { play: boolean; letter: ReactNode; to: string; from: string; sealLabel: string };
+// letter — превью письма внутри конверта; onOut — письмо вышло из кармана: дальше страница сама раскрывает полное письмо из этого прямоугольника
+// letterSize — размер полного письма (px): письмо в конверте — то же письмо, уменьшенное (--k), с теми же пропорциями
+type Props = {
+  play: boolean;
+  letter: ReactNode;
+  to: string;
+  from: string;
+  sealLabel: string;
+  onOut?: (rect: DOMRect) => void;
+  letterSize?: [number, number];
+};
 
-export function Envelope3D({ play, letter, to, from, sealLabel }: Props) {
+export function Envelope3D({ play, letter, to, from, sealLabel, onOut, letterSize }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const [letterEl] = useState(() => document.createElement("div"));
   const [size, setSize] = useState<[number, number] | null>(null);
   const st = useRef({ seal: 0, flap: 0, rise: 0, cam: 0 }).current;
   const played = useRef(false);
+  const onOutRef = useRef(onOut);
+  onOutRef.current = onOut;
 
   // размер сцены (пересборка при ресайзе — геометрия считается в пикселях)
   useEffect(() => {
@@ -119,10 +131,10 @@ export function Envelope3D({ play, letter, to, from, sealLabel }: Props) {
     // ---- геометрия (px) ----
     const W = Math.round(vw * 0.64);
     const Lw = Math.round(W * 0.9);
-    const Lh = Math.round(vh * 0.8);
+    const Lh = letterSize ? Math.round(Math.min(vh * 0.8, Lw * (letterSize[1] / letterSize[0]))) : Math.round(vh * 0.8);
     const H = Math.round(Lh / 0.9);
-    const rise = vh * 0.555; // насколько письмо выходит из кармана (низ письма остаётся у вершины выреза)
-    const T = vh * 0.46; // верх письма в финале (мир, y вверх от центра экрана)
+    const rise = Lh * 0.69; // насколько письмо выходит из кармана (низ письма остаётся у вершины выреза)
+    const T = Lh * 0.575; // верх письма в финале (мир, y вверх от центра экрана)
     const letterTop0 = T - rise;
     const Et = letterTop0 + 0.04 * H;
     const cy = Et - H / 2; // центр конверта
@@ -494,6 +506,7 @@ export function Envelope3D({ play, letter, to, from, sealLabel }: Props) {
     letterEl.className = "env-letter";
     letterEl.style.width = `${Lw}px`;
     letterEl.style.height = `${Lh}px`;
+    if (letterSize) letterEl.style.setProperty("--k", String(Lw / letterSize[0]));
     const letterObj = new CSS3DObject(letterEl);
     const letterY0 = Et - cy - 0.04 * H - Lh / 2;
     env.add(letterObj);
@@ -594,7 +607,7 @@ export function Envelope3D({ play, letter, to, from, sealLabel }: Props) {
       glFront.domElement.remove();
       css.domElement.remove();
     };
-  }, [size, letterEl, st, to, from, sealLabel]);
+  }, [size, letterEl, st, to, from, sealLabel, letterSize]);
 
   // анимация вскрытия — один раз; состояние в st переживает пересборку сцены
   useEffect(() => {
@@ -605,8 +618,9 @@ export function Envelope3D({ play, letter, to, from, sealLabel }: Props) {
       .to(st, { seal: 1, duration: 1.7, ease: "none" })
       .to(st, { flap: 1, duration: 2.3, ease: "power2.inOut" }, 1.2)
       .to(st, { cam: 1, duration: 4.4, ease: "power2.inOut" }, 2.8)
-      .to(st, { rise: 1, duration: 3.8, ease: "power3.out" }, 3.2);
-  }, [play, st]);
+      .to(st, { rise: 1, duration: 3.8, ease: "power3.out" }, 3.2)
+      .call(() => onOutRef.current?.(letterEl.getBoundingClientRect()), undefined, 6.2);
+  }, [play, st, letterEl]);
 
   return (
     <div className="env3d" ref={host}>

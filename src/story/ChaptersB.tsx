@@ -4,11 +4,9 @@ import { CARE_LIST, FINALE, POSTSCRIPT, START_DATE } from "@/lib/story";
 import { photo, video as videoUrl } from "@/lib/media";
 import { TrackList } from "@/components/TrackList";
 import { VideoPlayer } from "@/components/VideoPlayer";
-import { LaceHeart } from "@/components/LaceHeart";
 import { Envelope3D } from "@/components/Envelope3D";
 import { Decor } from "@/components/Decor";
 import { playTg } from "@/lib/sfx";
-import { CupidGame } from "@/components/CupidGame";
 import { useAudio } from "@/components/AudioProvider";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { ChapterHead, Img, Section, tracksMeta } from "./Section";
@@ -43,68 +41,97 @@ const ANNIVERSARY = new Date(
   START_DATE.getDate(),
 );
 
+// содержимое письма: live — настоящее видео; иначе постер (письмо в конверте, без лишнего видео-потока)
+function CareLetterBody({ live }: { live: boolean }) {
+  const c = ch("care");
+  return (
+    <>
+      <div className="cl-list">
+        <p className="letter-intro">{CARE_LIST.intro}</p>
+        <ul className="letter-list">
+          {CARE_LIST.items.map((it) => (
+            <li key={it}>{it}</li>
+          ))}
+        </ul>
+      </div>
+      <div className="cl-video">
+        {live ? <VideoPlayer name={c.videos[0]} /> : <img src={videoUrl(c.videos[0]).poster} alt="" />}
+      </div>
+      <div className="cl-right">
+        <p className="letter-accent scr">{c.paragraphs[1]}</p>
+        <TrackList tracks={c.tracks} side="B" label={c.title} bare />
+      </div>
+      <div className="cl-photos">
+        {c.photos.slice(2).map((k) => (
+          <figure key={k}>
+            <Img src={photo(k)} />
+          </figure>
+        ))}
+      </div>
+    </>
+  );
+}
+
 export function Care() {
   const c = ch("care");
   const [stageRef, seen] = useOnceVisible<HTMLDivElement>(0.6);
+  const full = useRef<HTMLDivElement>(null);
+  const [opened, setOpened] = useState(false);
+  const [size, setSize] = useState<[number, number] | null>(null);
+
+  // размер полного письма — по нему строится письмо в конверте (то же, уменьшенное)
+  useEffect(() => {
+    const el = full.current;
+    if (!el) return;
+    const ro = new ResizeObserver(() => setSize((p) => (p && p[0] === el.offsetWidth && p[1] === el.offsetHeight ? p : [el.offsetWidth, el.offsetHeight])));
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // письмо вышло из кармана → конверт уходит вниз и гаснет, то же письмо вырастает из своего прямоугольника на весь экран
+  const onOut = useCallback((r: DOMRect) => {
+    const el = full.current;
+    const stage = stageRef.current;
+    if (!el || !stage) return;
+    setOpened(true);
+    const f = el.getBoundingClientRect();
+    gsap.to(stage.querySelector(".env3d"), { yPercent: 40, opacity: 0, duration: 1.3, ease: "power2.in", delay: 0.15 });
+    gsap.fromTo(
+      el,
+      { x: r.left - f.left, y: r.top - f.top, scaleX: r.width / f.width, scaleY: r.height / f.height, opacity: 1, visibility: "visible" },
+      { x: 0, y: 0, scaleX: 1, scaleY: 1, duration: 1.5, ease: "power3.inOut" },
+    );
+  }, [stageRef]);
 
   return (
     <Section id={c.id} tone="burgundy" className="care">
-      <Decor name="gold-flower" className="care-flower" reveal="fade" />
-      <div className="care-stage" ref={stageRef}>
-        <Envelope3D
-          play={seen}
-          to="кому: Мише"
-          from="от: Лизы"
-          sealLabel="Lover"
-          letter={
-            <>
-              <div className="env-letter-col">
-                <p className="letter-intro">{CARE_LIST.intro}</p>
-                <ul className="letter-list">
-                  {CARE_LIST.items.map((it) => (
-                    <li key={it}>{it}</li>
-                  ))}
-                </ul>
+      <div className="care-side">
+        <ChapterHead kicker={c.kicker} title={c.title} light meta={tracksMeta(c.tracks.length)} />
+        {/* скриншоты с текстом — крупно, при наведении ещё крупнее */}
+        {c.photos.slice(0, 2).map((k) => (
+          <figure key={k} className="care-meme" data-reveal="up">
+            <img src={photo(k)} alt="" loading="lazy" />
+          </figure>
+        ))}
+      </div>
+      <div className={`care-stage ${opened ? "is-open" : ""}`} ref={stageRef}>
+        {size && (
+          <Envelope3D
+            play={seen}
+            onOut={onOut}
+            letterSize={size}
+            to="кому: Мише"
+            from="от: Лизы"
+            sealLabel="Lover"
+            letter={
+              <div className="care-letter care-letter-pv" style={{ width: size[0], height: size[1] }}>
+                <CareLetterBody live={false} />
               </div>
-              <div className="care-video">
-                <VideoPlayer name={c.videos[0]} />
-              </div>
-              <div className="env-letter-col">
-                <p className="letter-accent scr">{c.paragraphs[1]}</p>
-                <TrackList tracks={c.tracks} side="B" label={c.title} bare />
-              </div>
-            </>
-          }
-        />
-        <div className="care-side care-side-l">
-          <ChapterHead
-            kicker={c.kicker}
-            title={c.title}
-            light
-            meta={tracksMeta(c.tracks.length)}
+            }
           />
-          {c.photos.slice(0, 2).map((k, i) => (
-            <figure
-              key={k}
-              className={`pol care-pol care-pol-l${i}`}
-              data-reveal="drop"
-            >
-              <Img src={photo(k)} />
-              <span className={`tape ${i ? "g" : ""} tape-tc`} />
-            </figure>
-          ))}
-        </div>
-        <div className="care-side care-side-r">
-          {c.photos.slice(2).map((k, i) => (
-            <figure
-              key={k}
-              className={`pol care-pol care-pol-r${i}`}
-              data-reveal="drop"
-            >
-              <Img src={photo(k)} />
-              <span className={`tape ${["c", "", "g", "c", ""][i]} tape-tc`} />
-            </figure>
-          ))}
+        )}
+        <div className="care-letter" ref={full}>
+          <CareLetterBody live={opened} />
         </div>
       </div>
     </Section>
@@ -178,7 +205,6 @@ export function Circles() {
           <span className="circles-num">2</span>
           <span className="caps">кружочка · {CIRCLE_LEN.join(" + ")}</span>
         </div>
-        <Decor name="favorite-person" className="circles-fav" />
         <Decor name="cats" className="circles-cats" />
       </div>
 
@@ -252,27 +278,6 @@ export function Circles() {
   );
 }
 
-function Stickers() {
-  return (
-    <>
-      <svg
-        className="stk stk-band"
-        width="150"
-        height="56"
-        viewBox="0 0 150 56"
-        aria-hidden="true"
-      >
-        <rect x="3" y="6" width="144" height="44" rx="22" fill="#e9c6b3" />
-        <rect x="52" y="10" width="46" height="36" rx="5" fill="#dfb39d" />
-        <path
-          d="M75 39c-9-6-14-10-14-15a6 6 0 0 1 14-3 6 6 0 0 1 14 3c0 5-5 9-14 15z"
-          fill="#C21807"
-        />
-      </svg>
-    </>
-  );
-}
-
 export function Everything() {
   const c = ch("everything");
   const items = [
@@ -285,37 +290,45 @@ export function Everything() {
     { k: c.photos[3], cls: "sb-7" },
     { v: c.videos[3], cls: "sb-8" },
   ];
+  // лента кадров едет туда-обратно на ширину «лишнего» (без дублей видео)
+  const strip = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = strip.current;
+    if (!el) return;
+    const track = el.firstElementChild as HTMLElement;
+    const fit = () => {
+      // правый край последнего кадра + отступ ленты (scrollWidth правый padding не учитывает — крайний кадр обрезался)
+      const last = track.lastElementChild as HTMLElement | null;
+      const padR = parseFloat(getComputedStyle(track).paddingRight) || 0;
+      const over = last ? Math.max(0, last.offsetLeft + last.offsetWidth + padR - el.clientWidth) : 0;
+      track.style.setProperty("--sb-shift", `${-over}px`);
+      track.style.setProperty("--sb-dur", `${Math.max(8, over / 70)}s`);
+    };
+    const ro = new ResizeObserver(fit);
+    ro.observe(el);
+    ro.observe(track);
+    return () => ro.disconnect();
+  }, []);
+
   return (
-    <Section id={c.id} tone="paper" className="everything paper-tex">
-      <div className="sb-head">
-        <ChapterHead
-          kicker={c.kicker}
-          title={c.title}
-          meta={tracksMeta(c.tracks.length)}
-        />
-      </div>
-      <Stickers />
-      {items.map((it, i) => (
-        <figure
-          key={i}
-          className={`sb-item ${it.cls} ${it.v ? "sb-video" : "pol"}`}
-          data-reveal="drop"
-        >
-          {it.v ? <VideoPlayer name={it.v} /> : <Img src={photo(it.k!)} />}
-          {it.cls !== "sb-6" && ( // на этом видео только пластырь
-            <span
-              className={`tape ${["", "g", "c"][i % 3]} ${i % 2 ? "tape-tr" : "tape-tl"}`}
-            />
-          )}
-        </figure>
-      ))}
-      <div className="sb-center">
-        <article className="sb-card" data-reveal="up">
-          <p className="body">{c.paragraphs[0]}</p>
-          <p className="hand handnote-big">{c.paragraphs[1]}</p>
+    <Section id={c.id} tone="paper" className="everything">
+      <div className="sb-top">
+        <article className="sb-card">
+          <ChapterHead kicker={c.kicker} title={c.title} meta={tracksMeta(c.tracks.length)} />
+          <p className="body" data-reveal="up">{c.paragraphs[0]}</p>
+          <p className="hand handnote-big" data-reveal="up">{c.paragraphs[1]}</p>
         </article>
         <div className="sb-tracks" data-reveal="up">
-          <TrackList tracks={c.tracks} side="B" label={c.title} />
+          <TrackList tracks={c.tracks} side="B" label={c.title} bare />
+        </div>
+      </div>
+      <div className="sb-strip" ref={strip} data-reveal="fade">
+        <div className="sb-strip-track">
+          {items.map((it, i) => (
+            <figure key={i} className={`sb-item ${it.cls} ${it.v ? "sb-video" : "sb-photo"}`}>
+              {it.v ? <VideoPlayer name={it.v} /> : <Img src={photo(it.k!)} />}
+            </figure>
+          ))}
         </div>
       </div>
     </Section>
@@ -324,18 +337,17 @@ export function Everything() {
 
 export function Year() {
   const c = ch("year");
+  // любимое фото — полароидом на скотче, кадр целиком (в рамке-сердце обрезались лица); видео горизонтальное
   return (
     <Section id={c.id} tone="blush" className="year">
       <Decor name="lace-cream" className="year-lace" reveal="fade" />
-      <div
-        className="year-blur"
-        style={{ backgroundImage: `url(${photo(c.photos[0])})` }}
-        aria-hidden="true"
-      />
-      <div className="year-heart" data-reveal="fade">
-        <LaceHeart image={photo(c.photos[0])} size={640} rotate={-4} />
-        <p className="scr year-caption">{c.caption}</p>
-      </div>
+      <figure className="year-pol" data-reveal="drop">
+        <div className="year-pol-img">
+          <Img src={photo(c.photos[0])} />
+        </div>
+        <figcaption className="hand year-caption">{c.caption}</figcaption>
+        <span className="tape tape-tc" />
+      </figure>
       <div className="year-body">
         <ChapterHead kicker={c.kicker} title={c.title} />
         <p className="lead" data-reveal="up">
@@ -344,19 +356,10 @@ export function Year() {
         <p className="body" data-reveal="up">
           {c.paragraphs[1]}
         </p>
-        <div className="year-row">
-          <figure className="pol year-video" data-reveal="drop">
-            <div className="year-video-frame">
-              <VideoPlayer name={c.videos[0]} />
-            </div>
-            <span className="tape tape-tc" />
-          </figure>
-          <div className="year-notes">
-            <p className="hand year-note">{c.videoCaption}</p>
-            <Decor name="love-of-my-life" className="year-lomf" />
-          </div>
-          <Decor name="gold-flower" className="year-flower" />
-        </div>
+        <figure className="year-video" data-reveal="up">
+          <VideoPlayer name={c.videos[0]} />
+        </figure>
+        <p className="hand year-note" data-reveal="up">{c.videoCaption}</p>
       </div>
     </Section>
   );
@@ -367,9 +370,6 @@ export function Finale() {
   const confetti = useRef<ConfettiRef>(null);
   const { toggle } = useAudio();
   const [k, setK] = useState(0);
-  // финал закрыт мини-игрой: попал купидоном — раскрывается
-  const [open, setOpen] = useState(false);
-  const win = useCallback(() => setOpen(true), []);
   // сайт — подарок к годовщине: до 17.10.2026 показываем ровно год (365 дней), после — живой счёт дальше
   const ms = Math.max(ANNIVERSARY.getTime(), Date.now()) - START_DATE.getTime();
   const days = Math.floor(ms / 86400000);
@@ -377,8 +377,7 @@ export function Finale() {
   const minutes = Math.floor(ms / 60000);
 
   useEffect(() => {
-    if (!seen || !open) return;
-    gsap.from(".finale-body > *", { y: 40, opacity: 0, duration: 0.9, stagger: 0.12, ease: "power3.out" });
+    if (!seen) return;
     gsap.from(".finale-photo", { scale: 1.12, duration: 2.4, ease: "power2.out" });
     const o = { v: 0 };
     gsap.to(o, {
@@ -393,16 +392,14 @@ export function Finale() {
       startVelocity: 40,
       colors: ["#551515", "#a8803f", "#f6ece0", "#f3a9c0", "#c21807"],
     });
-  }, [seen, open]);
+  }, [seen]);
 
   const n = (x: number) => Math.round(x * k).toLocaleString("ru-RU");
 
   return (
-    <Section id="finale" tone="night" className="finale" laceUp>
-      <Decor name="you-belong-to-me" className="finale-belong" />
+    <Section id="finale" tone="night" className="finale">
       <Decor name="cosmos" className="finale-cosmos" />
       <Confetti ref={confetti} manualstart className="confetti-canvas" />
-      {!open && <CupidGame onWin={win} />}
       <div className="finale-photo" data-reveal="left">
         <Img src={photo(FINALE.photo)} />
       </div>
@@ -411,7 +408,7 @@ export function Finale() {
           {FINALE.text}
         </p>
         <p className="finale-love scr" data-reveal="up">
-          {FINALE.love}
+          {FINALE.love.replace(/\s*❤️?\s*$/u, "")} {/* сердечко-эмодзи убрано по просьбе заказчицы */}
         </p>
         <div className="finale-counters" data-reveal="up">
           <div>
@@ -452,7 +449,7 @@ export function Finale() {
 
 export function PostScript() {
   return (
-    <Section id="ps" tone="paper" className="ps paper-tex">
+    <Section id="ps" tone="paper" className="ps">
       <div className="ps-text-col">
         <div className="ps-mark scr" data-reveal="up">
           P.S.
@@ -460,8 +457,6 @@ export function PostScript() {
         <p className="ps-text" data-reveal="up">
           {POSTSCRIPT.text.replace(/^P\.S\.\s*/, "")}
         </p>
-        <Decor name="ps-i-love-u" className="ps-iloveu" />
-        <Decor name="clover" className="ps-clover" />
       </div>
       <div className="ps-photos">
         {POSTSCRIPT.photos.map((k, i) => (
@@ -471,18 +466,16 @@ export function PostScript() {
             data-reveal="drop"
           >
             <Img src={photo(k)} />
-            <span className={`tape ${i ? "g tape-tr" : "c tape-tl"}`} />
           </figure>
         ))}
         <Decor name="cherries" className="ps-cherries" />
-        <Decor name="heart-button" className="ps-button" />
       </div>
       <footer className="site-foot">
-        <span className="caps">Л &amp; М</span>
+        <span className="caps">М &amp; Е</span>
         <span className="caps">
           {fmt(START_DATE)} — {fmt(ANNIVERSARY)}
         </span>
-        <span className="caps">конец стороны Б</span>
+        <span className="caps">конец стороны B</span>
       </footer>
     </Section>
   );

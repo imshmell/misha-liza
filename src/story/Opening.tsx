@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
-import { INTRO, START_DATE } from "@/lib/story";
+import { INTRO } from "@/lib/story";
 import { photo } from "@/lib/media";
 import { TrackList } from "@/components/TrackList";
 import { useAudio } from "@/components/AudioProvider";
@@ -8,13 +8,9 @@ import { Vinyl } from "@/components/Vinyl";
 import { Img, Section } from "./Section";
 import { ch } from "./ChaptersA";
 
-const fmt = (d: Date) => `${String(d.getDate()).padStart(2, "0")}.${String(d.getMonth() + 1).padStart(2, "0")}.${d.getFullYear()}`;
-
 export function Hero() {
   const { playing, toggle, current } = useAudio();
   const vinyl = useRef<HTMLDivElement>(null);
-  const end = new Date(START_DATE);
-  end.setFullYear(end.getFullYear() + 1);
   const first = INTRO.tracks[0];
   const firstPlaying = playing && current?.title === first.title;
 
@@ -26,28 +22,21 @@ export function Hero() {
 
   return (
     <Section id="hero" tone="night" className="hero">
-      <Img src={photo("p4")} className="hero-bg" bw />
+      <Img src={photo("p1")} className="hero-bg" bw />
       <div className="hero-scrim" />
 
       <div className="hero-vinyl-slot" ref={vinyl}>
         <Vinyl playing={playing} className="hero-vinyl" />
       </div>
 
-      <div className="hero-top">
-        <span className="caps">est. 17 · 10 · 2025</span>
-        <span className="hero-top-mark scr">Миша &amp; Лиза</span>
-        <span className="caps">пролог · сторона A</span>
-      </div>
+      <span className="caps hero-est">est. 17 · 10 · 2025</span>
 
       <div className="hero-copy">
         <p className="caps hero-kicker" data-reveal="up">первая годовщина · музыкальный фотомемуар</p>
         <h1 className="hero-names" data-reveal="up">
-          Миша <span className="hero-amp">&amp;</span> Лиза
+          Миша <span className="hero-amp">&amp;</span> Елизавета
         </h1>
         <div className="hero-sub" data-reveal="up">
-          <span className="caps hero-dates">
-            {fmt(START_DATE)} — {fmt(end)}
-          </span>
           <span className="scr hero-sub-script">плейлист нашей истории</span>
         <button type="button" className="hero-play" onClick={() => toggle(first)}>
             <span className="hero-play-btn">
@@ -67,26 +56,7 @@ export function Hero() {
         </div>
       </div>
 
-      <div className="hero-side">
-        <div className="hero-keys" aria-label="листай стрелкой вниз">
-          <kbd className="hero-key">
-            <svg viewBox="0 0 16 16"><path d="M8 2.5v10M3.5 8.5 8 13l4.5-4.5" /></svg>
-          </kbd>
-          <span className="caps">листай стрелкой</span>
-        </div>
-      </div>
 
-      {/* рамка как на старом конверте пластинки: две тонкие золотые линии, вырезанные углы с сердечками */}
-      <div className="hero-frame" aria-hidden="true">
-        <span className="hero-frame-in" />
-        {["tl", "tr", "bl", "br"].map((c) => (
-          <svg key={c} className={`hero-frame-c hero-frame-${c}`} viewBox="0 0 40 40">
-            <path d="M0 26 A26 26 0 0 0 26 0" />
-            <path d="M0 34 A34 34 0 0 0 34 0" opacity=".45" />
-            <path d="M9 13.5c-2.6-1.7-4.2-3.1-4.2-4.8a2.1 2.1 0 0 1 4.2-.8 2.1 2.1 0 0 1 4.2.8c0 1.7-1.6 3.1-4.2 4.8z" className="hero-frame-heart" />
-          </svg>
-        ))}
-      </div>
     </Section>
   );
 }
@@ -102,7 +72,7 @@ export function Intro() {
   const goto = (id: string) => window.dispatchEvent(new CustomEvent("goto", { detail: id }));
   return (
     <Section id="intro" tone="paper" className="intro">
-      <div className="intro-left paper-tex">
+      <div className="intro-left">
         <span className="caps intro-kicker" data-reveal="up">вступление · оборот пластинки</span>
         <h2 className="intro-title scr" data-reveal="up">{INTRO.title}</h2>
         <p className="lead intro-lead" data-reveal="up">{INTRO.text}</p>
@@ -136,18 +106,13 @@ export function Intro() {
           ))}
         </nav>
       </div>
-      <div className="intro-right vel">
+      <div className="intro-right">
         {INTRO.stories.map((k, i) => (
           <figure key={k} className={`phone phone-${i}`} data-reveal={i ? "right" : "left"}>
             <div className="phone-notch" />
             <img src={photo(k)} alt="" loading="lazy" />
-            <span className={`tape ${i ? "g" : ""} ${i ? "tape-tr" : "tape-tl"}`} />
           </figure>
         ))}
-        <figure className="pol intro-photo" data-reveal="drop">
-          <Img src={photo(INTRO.hero)} />
-          <span className="tape tape-tr" />
-        </figure>
       </div>
     </Section>
   );

@@ -3,11 +3,7 @@
    ====================================================================== */
 
 /* ===== Фактуры ===== */
-.paper-tex{
-  background-color: #F1E9D8;
-  background-image: radial-gradient(rgba(85,21,21,.06) 1px, transparent 1.4px), radial-gradient(rgba(168,128,63,.08) 1px, transparent 1.4px);
-  background-size: 5px 5px, 7px 7px; background-position: 0 0, 2px 3px;
-}
+.paper-tex{ background-color: #F1E9D8; } /* минимализм: бумага без узора */
 .vel{
   background-color: #551515;
   background-image:
@@ -21,6 +17,7 @@
 .grain{ position: relative; }
 .grain::after{
   content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
+  opacity: .5; /* зерно тише — без «точек» */
   background-image: radial-gradient(rgba(255,255,255,.08) 1px, transparent 1.3px), radial-gradient(rgba(0,0,0,.22) 1px, transparent 1.3px);
   background-size: 3px 3px, 4px 4px; background-position: 0 0, 1px 2px;
 }
@@ -59,33 +56,39 @@
 .gb svg{ width: 16px; height: 16px; fill: currentColor; }
 
 /* ===== Видео ===== */
-.vp{ position: relative; overflow: hidden; background: #120708; width: 100%; height: 100%; }
+.vp{ position: relative; overflow: hidden; background: #120708; width: 100%; height: 100%; container-type: inline-size; }
+@container (max-width: 200px){ .gb-label{ display: none; } .gb-sound.is-muted{ width: 44px; padding: 0; } .vp-controls{ right: 8px; bottom: 8px; gap: 6px; } }
 .vp video{ width: 100%; height: 100%; display: block; cursor: pointer; }
 .vp-round, .vp-round video{ border-radius: 50%; }
-.vp-controls{ position: absolute; right: 12px; bottom: 12px; z-index: 3; display: flex; gap: 8px; opacity: .85; transition: opacity .3s ease; }
+.vp-controls{ position: absolute; right: 12px; bottom: 12px; z-index: 3; display: flex; gap: 8px; opacity: .92; transition: opacity .3s ease; }
+/* звук выключен — розовая «таблетка» с подписью, видно сразу */
+.gb-sound.is-muted{ width: auto; padding: 0 14px 0 12px; gap: 7px; border-radius: 999px; background: #F3A9C0; border-color: #F3A9C0; color: #330D0D; animation: gb-hint 2.6s ease-in-out infinite; }
+.gb-sound.is-muted:hover{ background: #f7c3d3; }
+.gb-label{ font-family: 'EB Garamond', serif; font-size: 12px; letter-spacing: .18em; text-transform: uppercase; }
+@keyframes gb-hint{ 0%, 100%{ box-shadow: 0 0 0 0 rgba(243,169,192,.6); } 50%{ box-shadow: 0 0 0 7px rgba(243,169,192,0); } }
 .vp:hover .vp-controls{ opacity: 1; }
 .vp-round .vp-controls{ right: 50%; bottom: 12%; transform: translateX(50%); }
 .vp-ring{ position: absolute; inset: -12px; width: calc(100% + 24px); height: calc(100% + 24px); pointer-events: none; transform: rotate(-90deg); }
 
 /* ===== Треклист-карточка ===== */
-.sl{ width: 100%; max-width: 440px; padding: 20px 24px 10px; border: 1px solid rgba(168,128,63,.5); }
+.sl{ width: 100%; max-width: 440px; padding: 2.2vh 2.4vh 1vh; border: 1px solid rgba(168,128,63,.5); }
 .sl-dark{ background: rgba(33,8,8,.62); color: #F1E9D8; backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); }
 .sl-lt{ background: #F8F2E6; color: #330D0D; border-color: rgba(85,21,21,.22); box-shadow: 0 14px 34px rgba(51,13,13,.14); }
 .sl-bare{ background: transparent; border: 0; box-shadow: none; padding: 0; backdrop-filter: none; }
-.sl-h{ display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-bottom: 12px; border-bottom: 1px solid rgba(168,128,63,.6); }
+.sl-h{ display: flex; justify-content: space-between; align-items: center; gap: 1rem; padding-bottom: 1.1vh; border-bottom: 1px solid rgba(168,128,63,.6); }
 .sl-h .caps{ font-size: 11px; }
-.sl-label{ font-family: 'Playfair Display', serif; font-style: italic; font-size: 16px; opacity: .7; }
-.tr{ display: grid; grid-template-columns: 30px 44px 1fr; align-items: center; column-gap: 14px; padding: 8px 0; min-height: 60px; border-bottom: 1px solid rgba(168,128,63,.24); }
+.sl-label{ font-family: 'Playfair Display', serif; font-style: italic; font-size: clamp(13px, 2vh, 18px); opacity: .7; }
+.tr{ display: grid; grid-template-columns: clamp(20px, 3.2vh, 32px) clamp(28px, 4.6vh, 46px) 1fr; align-items: center; column-gap: clamp(8px, 1.5vh, 16px); padding: .55vh 0; min-height: clamp(34px, 5.8vh, 62px); border-bottom: 1px solid rgba(168,128,63,.24); }
 .tr:last-child{ border-bottom: 0; }
-.tr-n{ font-family: 'EB Garamond', serif; font-size: 13px; letter-spacing: .12em; color: #A8803F; }
-.tr-pl{ width: 44px; height: 44px; border-radius: 50%; border: 1px solid #A8803F; background: transparent; color: inherit; display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; transition: all .25s ease; }
+.tr-n{ font-family: 'EB Garamond', serif; font-size: clamp(11px, 1.7vh, 14px); letter-spacing: .12em; color: #A8803F; }
+.tr-pl{ width: clamp(28px, 4.6vh, 46px); height: clamp(28px, 4.6vh, 46px); border-radius: 50%; border: 1px solid #A8803F; background: transparent; color: inherit; display: flex; align-items: center; justify-content: center; padding: 0; cursor: pointer; transition: all .25s ease; }
 .tr-pl:hover, .tr.is-active .tr-pl{ background: #C21807; border-color: #C21807; color: #F1E9D8; }
-.tr-t{ font-family: 'Cormorant Garamond', serif; font-size: 21px; font-weight: 600; line-height: 1.1; }
-.tr-a{ font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 17px; opacity: .78; line-height: 1.2; }
-.tr-nt{ font-family: 'Caveat', cursive; font-size: 21px; color: #C21807; line-height: 1.1; margin-top: 3px; }
+.tr-t{ font-family: 'Cormorant Garamond', serif; font-size: clamp(15px, 2.4vh, 25px); font-weight: 600; line-height: 1.1; }
+.tr-a{ font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(12.5px, 1.9vh, 19px); opacity: .78; line-height: 1.2; }
+.tr-nt{ font-family: 'Caveat', cursive; font-size: clamp(15px, 2.35vh, 24px); color: #C21807; line-height: 1.05; margin-top: 2px; }
 .sl-dark .tr-nt{ color: #F3A9C0; }
 .tr.is-missing .tr-t{ opacity: .6; }
-.sl-note{ font-family: 'Caveat', cursive; font-size: 30px; line-height: 1.05; color: #C21807; margin: 14px 0 6px; transform: rotate(-2deg); }
+.sl-note{ font-family: 'Caveat', cursive; font-size: clamp(20px, 3.4vh, 32px); line-height: 1.05; color: #C21807; margin: 14px 0 6px; transform: rotate(-2deg); }
 .sl-dark .sl-note{ color: #F3A9C0; }
 
 .eq{ display: flex; align-items: flex-end; gap: 3px; height: 16px; }
