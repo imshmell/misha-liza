@@ -1,0 +1,187 @@
+/* ======================================================================
+   MOBILE — телефон (≤ 820px): обычный скролл, главы в одну колонку, могут быть длиннее экрана.
+   Брейкпоинт совпадает с MOBILE_QUERY в src/lib/mobile.ts.
+   ====================================================================== */
+@media (max-width: 820px){
+  :root{
+    --m-pad: 6vw;
+    --fs-lead: 17px;
+    --fs-body: 16px;
+  }
+  html{ -webkit-text-size-adjust: 100%; }
+  .s{ height: auto; min-height: 100svh; overflow: hidden; }
+  .chapter-nav{ display: none; }
+  .ch-title{ font-size: 34px; }
+  .ch-kicker{ font-size: 11px; }
+  .lead, .body{ line-height: 1.55; }
+
+  /* треклисты: крупные кнопки под палец */
+  .sl{ max-width: none; padding: 16px 0 6px; }
+  .tr{ grid-template-columns: 24px 44px 1fr; column-gap: 12px; min-height: 58px; padding: 6px 0; }
+  .tr-pl{ width: 44px; height: 44px; }
+  .tr-t{ font-size: 19px; }
+  .tr-a{ font-size: 15px; }
+  .tr-nt{ font-size: 19px; }
+  .tr-n{ font-size: 12px; }
+  .sl-label{ font-size: 15px; }
+
+  /* видео: кнопки всегда видны */
+  .vp-controls{ opacity: 1; }
+
+  /* ===== Обложка ===== */
+  .hero{ height: 100svh; min-height: 560px; }
+  .hero-bg img{ object-position: 40% 40%; }
+  .hero-scrim{ background: linear-gradient(180deg, rgba(33,8,8,.45) 0%, rgba(33,8,8,0) 25%, rgba(33,8,8,.35) 50%, rgba(33,8,8,.96) 100%); }
+  .hero-vinyl-slot{ width: 62vw; right: -24vw; top: 9svh; }
+  .hero-est{ left: var(--m-pad); top: 4svh; font-size: 11px; }
+  .hero-copy{ left: var(--m-pad); right: var(--m-pad); bottom: 6svh; }
+  .hero-kicker{ font-size: 10px; letter-spacing: .22em; line-height: 1.6; }
+  .hero-names{ font-size: 17vw; white-space: normal; line-height: .95; }
+  .hero-sub{ flex-direction: column; align-items: flex-start; gap: 18px; margin-top: 18px; }
+  .hero-sub-script{ font-size: 30px; }
+
+  /* ===== Немного музыки ===== */
+  .intro{ display: block; }
+  .intro-left{ padding: 9svh var(--m-pad) 6svh; }
+  .intro-title{ font-size: 32px; }
+  .intro-tracks{ max-width: none; }
+  .intro-toc{ grid-template-columns: 1fr; gap: 18px; }
+  .toc-t{ font-size: 18px; }
+  .intro-toc button{ padding: 7px 0; }
+  .intro-right{ height: 96vw; }
+  .intro-right .phone{ height: 78vw; top: 7vw; padding: 6px; border-radius: 22px; }
+  .intro-right .phone img{ border-radius: 17px; }
+  .intro-right .phone-notch{ top: 10px; height: 12px; }
+  .phone-0{ left: 3vw; transform: rotate(-3deg); }
+  .phone-1{ right: 3vw; transform: rotate(3deg) translateY(6vw); }
+
+  /* ===== I. Казань ===== */
+  .kazan{ padding: 9svh 0 7svh; }
+  .kazan-top{ grid-template-columns: 1fr; gap: 24px; padding: 0 var(--m-pad) 28px; }
+  .kazan-reel{ flex: none; height: 74vw; }
+  .reel{ left: -4vw; width: 108vw; }
+  .reel-track{ top: 38px; bottom: 38px; gap: 16px; }
+  .spr{ height: 26px; }
+  .reel-code{ display: none; }
+
+  /* ===== II. Бег ===== */
+  .run{ display: flex; flex-direction: column; }
+  .run-body{ order: -1; padding: 9svh var(--m-pad) 6svh; }
+  .run-media{ grid-template-rows: auto auto; gap: 18px 14px; padding: 7vw var(--m-pad) 9vw; align-items: start; }
+  .run-team{ max-height: none; }
+  .run-shot, .run-story{ height: auto; width: 100%; }
+
+  /* ===== III. Развод мостов: без кулис, видео фоном ===== */
+  .curtain-stage, .curtain-content{ position: relative; }
+  .curtain-gl, .curtain-valance, .curtain-holder{ display: none; }
+  .bridges-layout{ position: relative; display: flex; flex-direction: column; gap: 24px; padding: 9svh var(--m-pad) 8svh; }
+  .bridges-media{ container-type: normal; flex-wrap: wrap; gap: 12px; padding: 0; }
+  .bridges-ph, .bridges-video{ height: auto; }
+  .bridges-ph-w{ width: 100%; }
+  .bridges-media{ align-items: flex-start; }
+  .bridges-ph:not(.bridges-ph-w){ flex: 4 1 0; width: auto; } /* 3:4 и 9:16 одной высоты: ширины 4:3 */
+  .bridges-video{ flex: 3 1 0; width: auto; }
+  .bridges-bg .vp-controls{ right: 16px; top: 16px; bottom: auto; } /* звук фона — в правом верхнем углу главы */
+
+  /* ===== IV. 17 октября ===== */
+  .october{ grid-template-columns: 1fr; gap: 28px; padding: 9svh var(--m-pad) 8svh; }
+  .october-date{ font-size: 34vw; margin: 4px 0 20px; }
+
+  /* ===== V. Дача: текст, треки, потом фото (без внутренней прокрутки) ===== */
+  .dacha{ display: block; }
+  .dacha-card{ padding: 9svh var(--m-pad) 6svh; }
+  .dacha-card .lead, .dacha-card .body{ font-size: 16px; }
+  .dacha-tracks{ grid-template-columns: 1fr; gap: 0; }
+  .dacha-tracks .tr{ min-height: 56px; }
+  .dacha-scroll{ height: auto; overflow: visible; cursor: auto; }
+  .dacha-mosaic{ grid-auto-rows: 44vw; gap: 6px; padding: 6px; }
+
+  /* ===== VI. Конверт → сразу письмо ===== */
+  .care{ display: block; }
+  .care-side{ padding: 9svh var(--m-pad) 24px; display: grid; grid-template-columns: 1fr; gap: 18px; justify-items: center; }
+  .care-meme{ width: 82vw !important; }
+  .care-side .ch-head{ grid-column: 1 / -1; margin-bottom: 8px; }
+  .care-meme{ flex: none; width: 100%; height: auto; cursor: auto; }
+  .care-meme:hover{ transform: none; }
+  .care-stage{ height: auto; padding: 0 4vw 8svh; }
+  .care-letter{ position: relative; inset: auto; visibility: visible; opacity: 1; transform: none !important;
+    display: flex; flex-direction: column; gap: 22px; padding: 28px 6vw; }
+  .cl-video{ height: auto; width: 72%; align-self: center; }
+  .cl-photos{ height: auto; grid-template-columns: repeat(2, 1fr); }
+  .cl-photos figure:first-child{ grid-column: span 2; aspect-ratio: 4 / 3; }
+  .cl-photos figure{ aspect-ratio: 3 / 4; }
+  .letter-intro{ font-size: 22px; }
+  .letter-list li{ font-size: 16.5px; line-height: 1.45; margin-bottom: 2px; }
+  .letter-accent{ font-size: 24px; }
+
+  /* ===== VII. Кружочки: чат на весь экран, как в телефоне ===== */
+  .circles{ display: block; padding: 0; }
+  .circles-side{ position: relative; padding: 9svh var(--m-pad) 20px; display: grid; grid-template-columns: 1fr auto; align-items: end; }
+  .circles-side .ch-head{ grid-column: 1 / -1; }
+  .circles-count{ margin-top: 0; }
+  .circles-num{ font-size: 64px; }
+  .circles-cats{ width: 34vw; margin: 0; }
+  .tg{ height: auto; min-height: 100svh; border-radius: 0; }
+  .tg-top, .tg-bottom{ position: sticky; padding: 10px 14px; gap: 14px; }
+  .tg-top{ top: 0; }
+  .tg-bottom{ bottom: 0; }
+  .tg-ava{ width: 40px; height: 40px; }
+  .tg-who b{ font-size: 17px; }
+  .tg-who span{ font-size: 13px; }
+  .tg-feed{ display: flex; flex-direction: column; justify-content: flex-end; gap: 26px; padding: 26px 16px 30px; }
+  .tg-circle-a, .tg-circle-b{ height: auto; width: 72vw; }
+  .tg-circle-a, .tg-circle-b{ align-self: flex-start; }
+  .tg-bubble{ align-self: flex-end; max-width: 86%; padding: 14px 16px 24px; }
+  .tg-bubble p{ font-size: 18px; }
+  .tg-react{ font-size: 30px; right: -6px; }
+
+  /* ===== VIII. Всего не уместишь: лента листается пальцем ===== */
+  .everything{ display: block; padding: 9svh 0 8svh; }
+  .sb-top{ grid-template-columns: 1fr; gap: 26px; padding: 0 var(--m-pad); }
+  .sb-card .body{ font-size: 16px; }
+  .sb-card .handnote-big{ font-size: 24px; }
+  .sb-strip{ height: 112vw; margin-top: 30px; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .sb-strip::-webkit-scrollbar{ display: none; }
+  .sb-strip-track{ animation: none; padding: 0 var(--m-pad); gap: 12px; }
+  .sb-item{ scroll-snap-align: center; }
+  .sb-item[aria-hidden="true"]{ display: none; } /* дубли для бесконечной ленты на десктопе — на телефоне не нужны */
+
+  /* ===== IX. Этот год ===== */
+  .year{ display: flex; flex-direction: column; padding: 9svh 0 8svh; }
+  .year-lace{ height: 70vw; left: -12vw; top: -4vw; opacity: .7; }
+  .year-pol{ width: 80vw; padding: 12px 12px 0; }
+  .year-pol-img{ height: auto; width: 100%; }
+  .year-caption{ font-size: 22px; padding: 14px 0 16px; }
+  .year-pol .tape{ width: 90px; height: 26px; top: -13px; }
+  .year-body{ padding: 40px var(--m-pad) 0; }
+  .year-video{ width: 100%; }
+  .year-note{ font-size: 21px; max-width: none; }
+
+  /* ===== Финал ===== */
+  .finale{ display: flex; flex-direction: column; }
+  .finale-photo{ height: 118vw; }
+  .finale-body{ padding: 40px var(--m-pad) 34vw; }
+  .finale-love{ font-size: 22vw; margin: 8px 0 26px; }
+  .finale-counters{ gap: 14px; }
+  .finale-counters b{ font-size: 26px; }
+  .finale-days{ padding: 0 14px; }
+  .finale-days b{ font-size: 60px !important; }
+  .finale-cosmos{ width: 56vw; right: -16vw; bottom: -14vw; }
+
+  /* ===== P.S. ===== */
+  .ps{ display: flex; flex-direction: column; align-items: stretch; padding: 9svh var(--m-pad) 120px; gap: 40px; }
+  .ps-mark{ font-size: 80px; }
+  .ps-text{ font-size: 24px; }
+  .ps-pol{ width: 58vw; }
+  .ps-pol-1{ margin-left: -16vw; transform: rotate(3deg) translateY(10vw); }
+  .ps-cherries{ width: 26vw; top: -12vw; right: -2vw; }
+  .site-foot{ left: var(--m-pad); right: var(--m-pad); bottom: 28px; flex-direction: column; align-items: center; gap: 8px; }
+
+  /* «сейчас играет» — по ширине экрана */
+  .now-playing{ left: 12px; right: 12px; bottom: 12px; max-width: none; }
+}
+
+@media (max-width: 820px){
+  .reel-label{ display: none; } /* «наведи — остановится» — про мышь */
+  .reel:active .reel-track{ animation-play-state: paused; } /* палец на ленте — стоп */
+}

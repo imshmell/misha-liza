@@ -1,3 +1,4 @@
+import { isMobile } from "@/lib/mobile";
 import { useEffect, useRef, type ReactNode } from "react";
 import * as THREE from "three";
 import gsap from "gsap";
@@ -94,13 +95,13 @@ void main() {
 }
 `;
 
-export function Curtains({ children, delay = 0.4 }: { children: ReactNode; delay?: number }) {
+export function Curtains({ children, delay = 0.9 }: { children: ReactNode; delay?: number }) {
   const stage = useRef<HTMLDivElement>(null);
   const holders = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const el = stage.current;
-    if (!el) return;
+    if (!el || isMobile()) return; // на телефоне без кулис (WebGL тяжёлый, глава длиннее экрана)
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
@@ -162,11 +163,11 @@ export function Curtains({ children, delay = 0.4 }: { children: ReactNode; delay
           started = true;
           gsap
             .timeline({ delay })
-            .to(uniforms.uWave, { value: 1, duration: 0.7, ease: "sine.in" })
-            .to(uniforms.uOpen, { value: 0.92, duration: 1.5, ease: "power2.inOut" }, 0.1)
-            .to(uniforms.uOpen, { value: 1, duration: 1.1, ease: "elastic.out(1, 0.45)" })
-            .to(uniforms.uWave, { value: 0, duration: 1.4, ease: "power2.out" }, 1)
-            .to(holders.current?.children ?? [], { opacity: 1, y: 0, duration: 0.45, ease: "back.out(2)" }, 1.5);
+            .to(uniforms.uWave, { value: 1, duration: 1.1, ease: "sine.in" })
+            .to(uniforms.uOpen, { value: 0.92, duration: 2.6, ease: "power2.inOut" }, 0.2)
+            .to(uniforms.uOpen, { value: 1, duration: 1.6, ease: "elastic.out(1, 0.45)" })
+            .to(uniforms.uWave, { value: 0, duration: 2, ease: "power2.out" }, 1.8)
+            .to(holders.current?.children ?? [], { opacity: 1, y: 0, duration: 0.5, ease: "back.out(2)" }, 2.6);
         }
       },
       { threshold: [0, 0.6] }

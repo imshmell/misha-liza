@@ -114,9 +114,9 @@ body{ background: var(--cream); color: var(--wine-deep); font-family: var(--font
 .toc-c{ flex: none; font-family: var(--font-serif-caps); font-size: clamp(10px, 1.5vh, 13px); letter-spacing: .06em; color: rgba(85,21,21,.6); }
 .intro-toc button:hover .toc-t{ color: var(--red); }
 .intro-right{ position: relative; height: 100%; background: var(--wine); }
-.intro-right .phone{ position: absolute; height: min(66vh, 42vw); top: 9vh; }
+.intro-right .phone{ position: absolute; height: min(64vh, 40vw); top: 8vh; }
 .phone-0{ left: 6%; transform: rotate(-4deg); }
-.phone-1{ right: 8%; transform: rotate(4deg) translateY(16vh); z-index: 2; }
+.phone-1{ right: 8%; transform: rotate(4deg) translateY(12vh); z-index: 2; }
 
 /* ===== Плёнка-лента (как в макете: наклон −1.2°, едет сама, стоп на ховере) ===== */
 .reel{
@@ -342,9 +342,9 @@ html::-webkit-scrollbar{ display: none; }
 .sb-card .handnote-big{ font-size: clamp(19px, 3.2vh, 34px); line-height: 1.1; color: var(--red); margin: 0; }
 .sb-tracks .sl{ max-width: none; }
 .sb-strip{ position: relative; flex: 1; min-height: 0; margin-top: 3vh; overflow: hidden; }
-.sb-strip-track{ display: flex; gap: 2vh; height: 100%; width: max-content; padding: 0 6vw; animation: sb-pingpong var(--sb-dur, 40s) ease-in-out infinite alternate-reverse; } /* кадры едут вправо */
+.sb-strip-track{ display: flex; gap: 2vh; height: 100%; width: max-content; padding: 0 6vw; animation: sb-loop var(--sb-dur, 40s) linear infinite; } /* кадры едут вправо, бесконечно */
 .sb-strip:hover .sb-strip-track{ animation-play-state: paused; }
-@keyframes sb-pingpong{ from{ transform: translateX(0); } to{ transform: translateX(var(--sb-shift, 0px)); } }
+@keyframes sb-loop{ from{ transform: translateX(calc(-1 * var(--sb-set, 0px))); } to{ transform: translateX(0); } }
 .sb-item{ margin: 0; flex: none; height: 100%; background: #FBF6EC; padding: .8vh; box-shadow: 0 2vh 4vh -2vh rgba(40,10,10,.45); }
 .sb-photo{ aspect-ratio: 3 / 4; }
 .sb-video{ aspect-ratio: 9 / 16; }

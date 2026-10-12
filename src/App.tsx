@@ -10,6 +10,7 @@ import { NowPlaying } from "@/components/NowPlaying";
 import { Hero, Intro } from "@/story/Opening";
 import { Bridges, Dacha, Kazan, October, Run } from "@/story/ChaptersA";
 import { Care, Circles, Everything, Finale, PostScript, Year } from "@/story/ChaptersB";
+import { isMobile } from "@/lib/mobile";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -50,8 +51,12 @@ function App() {
       e.preventDefault();
       e.stopPropagation();
     };
-    window.addEventListener("wheel", block, { passive: false, capture: true });
-    window.addEventListener("touchmove", block, { passive: false, capture: true });
+    // на телефоне стрелок нет — обычный скролл пальцем
+    const mobile = isMobile();
+    if (!mobile) {
+      window.addEventListener("wheel", block, { passive: false, capture: true });
+      window.addEventListener("touchmove", block, { passive: false, capture: true });
+    }
     const blockKeys = (e: KeyboardEvent) => {
       const tag = (e.target as HTMLElement)?.tagName;
       if (tag === "INPUT" || tag === "TEXTAREA" || tag === "BUTTON") return;

@@ -11,6 +11,7 @@ import { useAudio } from "@/components/AudioProvider";
 import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { ChapterHead, Img, Section, tracksMeta } from "./Section";
 import { ch } from "./ChaptersA";
+import { isMobile } from "@/lib/mobile";
 
 function useOnceVisible<T extends HTMLElement>(threshold = 0.5) {
   const ref = useRef<T>(null);
@@ -76,7 +77,9 @@ export function Care() {
   const c = ch("care");
   const [stageRef, seen] = useOnceVisible<HTMLDivElement>(0.6);
   const full = useRef<HTMLDivElement>(null);
-  const [opened, setOpened] = useState(false);
+  // на телефоне без 3D-конверта: письмо сразу открыто
+  const [mobile] = useState(isMobile);
+  const [opened, setOpened] = useState(mobile);
   const [size, setSize] = useState<[number, number] | null>(null);
 
   // размер полного письма — по нему строится письмо в конверте (то же, уменьшенное)
@@ -115,7 +118,7 @@ export function Care() {
         ))}
       </div>
       <div className={`care-stage ${opened ? "is-open" : ""}`} ref={stageRef}>
-        {size && (
+        {size && !mobile && (
           <Envelope3D
             play={seen}
             onOut={onOut}
@@ -290,25 +293,23 @@ export function Everything() {
     { k: c.photos[3], cls: "sb-7" },
     { v: c.videos[3], cls: "sb-8" },
   ];
-  // лента кадров едет туда-обратно на ширину «лишнего» (без дублей видео)
+  // бесконечная лента в одну сторону: кадры продублированы, сдвиг ровно на один набор
   const strip = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const el = strip.current;
     if (!el) return;
     const track = el.firstElementChild as HTMLElement;
     const fit = () => {
-      // правый край последнего кадра + отступ ленты (scrollWidth правый padding не учитывает — крайний кадр обрезался)
-      const last = track.lastElementChild as HTMLElement | null;
-      const padR = parseFloat(getComputedStyle(track).paddingRight) || 0;
-      const over = last ? Math.max(0, last.offsetLeft + last.offsetWidth + padR - el.clientWidth) : 0;
-      track.style.setProperty("--sb-shift", `${-over}px`);
-      track.style.setProperty("--sb-dur", `${Math.max(8, over / 70)}s`);
+      const half = track.children[items.length] as HTMLElement | undefined;
+      if (!half) return;
+      const set = half.offsetLeft - (track.children[0] as HTMLElement).offsetLeft;
+      track.style.setProperty("--sb-set", `${set}px`);
+      track.style.setProperty("--sb-dur", `${Math.max(10, set / 60)}s`);
     };
     const ro = new ResizeObserver(fit);
-    ro.observe(el);
     ro.observe(track);
     return () => ro.disconnect();
-  }, []);
+  }, [items.length]);
 
   return (
     <Section id={c.id} tone="paper" className="everything">
@@ -324,8 +325,8 @@ export function Everything() {
       </div>
       <div className="sb-strip" ref={strip} data-reveal="fade">
         <div className="sb-strip-track">
-          {items.map((it, i) => (
-            <figure key={i} className={`sb-item ${it.cls} ${it.v ? "sb-video" : "sb-photo"}`}>
+          {[...items, ...items].map((it, i) => (
+            <figure key={i} className={`sb-item ${it.cls} ${it.v ? "sb-video" : "sb-photo"}`} aria-hidden={i >= items.length || undefined}>
               {it.v ? <VideoPlayer name={it.v} /> : <Img src={photo(it.k!)} />}
             </figure>
           ))}

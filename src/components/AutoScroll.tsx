@@ -1,4 +1,5 @@
 import { useEffect, useRef, type ReactNode } from "react";
+import { isMobile } from "@/lib/mobile";
 
 // Область, которая едет сама (маятником вниз-вверх). Курсор над ней — пауза;
 // зажал и тянешь — двигаешь ленту рукой (drag, с инерцией после отпускания). Увёл курсор — снова едет.
@@ -8,7 +9,7 @@ export function AutoScroll({ children, className = "", speed = 30 }: { children:
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || isMobile()) return; // на телефоне фото просто идут столбцом в общем скролле
     let visible = false;
     let hover = false;
     let dragging = false;
