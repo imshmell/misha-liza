@@ -1,6 +1,9 @@
 import { createContext, useCallback, useContext, useEffect, useRef, useState, type ReactNode } from "react";
 import { audio as audioUrl } from "@/lib/media";
 import type { Track } from "@/lib/story";
+import { claimSound, onSoundClaim, setSongPlaying } from "@/lib/soundBus";
+
+const SONG = Symbol("song");
 
 interface AudioState {
   current: Track | null;
@@ -24,9 +27,19 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const a = new Audio();
     a.preload = "none";
-    a.addEventListener("play", () => setPlaying(true));
-    a.addEventListener("pause", () => setPlaying(false));
-    a.addEventListener("ended", () => setPlaying(false));
+    a.addEventListener("play", () => {
+      setPlaying(true);
+      setSongPlaying(true);
+      claimSound(SONG); // песня заиграла — видео замолкают
+    });
+    a.addEventListener("pause", () => {
+      setPlaying(false);
+      setSongPlaying(false);
+    });
+    a.addEventListener("ended", () => {
+      setPlaying(false);
+      setSongPlaying(false);
+    });
     // «не загружен» — только при настоящей ошибке файла (404 и т.п.), а не когда переключили трек во время загрузки
     a.addEventListener("error", () => {
       setPlaying(false);
@@ -41,7 +54,12 @@ export function AudioProvider({ children }: { children: ReactNode }) {
       })
     );
     el.current = a;
-    return () => a.pause();
+    // видео включило звук — песню на паузу
+    const off = onSoundClaim((owner) => owner !== SONG && a.pause());
+    return () => {
+      off();
+      a.pause();
+    };
   }, []);
 
   const toggle = useCallback(

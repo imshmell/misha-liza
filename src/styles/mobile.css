@@ -173,22 +173,22 @@
   .finale-cosmos{ width: 56vw; right: -16vw; bottom: -14vw; }
 
   /* ===== P.S. ===== */
-  .ps{ display: flex; flex-direction: column; align-items: stretch; padding: 9svh var(--m-pad) 120px; gap: 40px; }
+  .ps{ display: flex; flex-direction: column; align-items: stretch; padding: 9svh var(--m-pad) calc(150px + 8vw); gap: 40px; } /* низ — место под подпись, фото её не перекрывают */
   .ps-mark{ font-size: 80px; }
   .ps-text{ font-size: 24px; }
-  .ps-pol{ width: 58vw; }
-  .ps-pol-1{ margin-left: -16vw; transform: rotate(3deg) translateY(10vw); }
+  .ps-pol{ width: 50vw; padding: 8px 8px 30px; }
+  .ps-pol-1{ margin-left: -7vw; transform: rotate(3deg) translateY(8vw); } /* нахлёст меньше — лицо мальчика на первом фото не закрыто */
   .ps-cherries{ width: 26vw; top: -12vw; right: -2vw; }
   .site-foot{ left: var(--m-pad); right: var(--m-pad); bottom: 28px; flex-direction: column; align-items: center; gap: 8px; }
 
   /* «сейчас играет» — по ширине экрана */
   .now-playing{ left: 12px; right: 12px; bottom: 12px; max-width: none; }
   .np-btn{ width: 44px; height: 44px; }
-  .np-close{ width: 40px; height: 40px; } /* под палец */
+  .np-close{ width: 44px; height: 44px; } /* под палец, как пауза */
   .np-close svg{ width: 13px; height: 13px; }
   .np-label{ font-size: 10.5px; letter-spacing: .22em; }
   /* плашка не закрывает подвал и низ P.S. */
-  body:has(.now-playing) .ps{ padding-bottom: calc(210px + 10vw); } /* +10vw — сдвиг второго полароида */
+  body:has(.now-playing) .ps{ padding-bottom: calc(230px + 8vw); } /* +10vw — сдвиг второго полароида */
   body:has(.now-playing) .site-foot{ bottom: 104px; }
 
   /* фон мостов — розовая «таблетка» со словом «звук» (container query прячет подпись у маленьких видео) */
@@ -214,8 +214,8 @@
   .year-pol{ width: min(80vw, 480px); align-self: center; }
   .finale-photo{ height: min(118vw, 760px); }
   .finale-love{ font-size: min(22vw, 140px); }
-  .ps-pol{ width: min(58vw, 340px); }
-  .ps-pol-1{ margin-left: -60px; transform: rotate(3deg) translateY(50px); }
+  .ps-pol{ width: min(50vw, 320px); }
+  .ps-pol-1{ margin-left: -30px; transform: rotate(3deg) translateY(40px); }
   .ps-cherries{ width: min(26vw, 160px); top: -80px; }
 }
 

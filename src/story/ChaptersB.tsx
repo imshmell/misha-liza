@@ -302,8 +302,8 @@ export function Everything() {
     { k: c.photos[3], cls: "sb-7" },
     { v: c.videos[3], cls: "sb-8" },
   ];
-  // бесконечная лента: едет вправо сама, тянется мышью/пальцем
-  const strip = useMarquee<HTMLDivElement>(60, 1);
+  // бесконечная лента: едет влево сама (как плёнка в Казани), тянется мышью/пальцем
+  const strip = useMarquee<HTMLDivElement>(60, -1);
 
   return (
     <Section id={c.id} tone="paper" className="everything">

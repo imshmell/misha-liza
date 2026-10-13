@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { video as videoUrl } from "@/lib/media";
+import { claimSound, onSoundClaim, songPlaying } from "@/lib/soundBus";
 
 interface VideoPlayerProps {
   name: string;
@@ -29,6 +30,19 @@ export function VideoPlayer({ name, className = "", round = false, ring, control
   const userPaused = useRef(false);
   const userMuted = useRef(false);
   const [near, setNear] = useState(false);
+  const [me] = useState(() => Symbol(name));
+
+  // кто-то другой зазвучал (песня или другое видео) — это видео без звука
+  useEffect(
+    () =>
+      onSoundClaim((owner) => {
+        const el = ref.current;
+        if (owner === me || !el || el.muted) return;
+        el.muted = true;
+        setMuted(true);
+      }),
+    [me]
+  );
   const { src, poster } = videoUrl(name);
 
   // ничего не качаем, пока видео не подъехало к экрану (за экран до него)
@@ -58,12 +72,13 @@ export function VideoPlayer({ name, className = "", round = false, ring, control
     const io = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !userPaused.current) {
-          if (sound && !userMuted.current) {
+          if (sound && !userMuted.current && !songPlaying()) {
             el.muted = false;
             el.play()
               .then(() => {
                 setMuted(false);
                 setPaused(false);
+                claimSound(me);
               })
               .catch(playMuted);
           } else el.play().then(() => setPaused(false)).catch(() => setPaused(true));
@@ -80,7 +95,7 @@ export function VideoPlayer({ name, className = "", round = false, ring, control
       io.disconnect();
       el.removeEventListener("timeupdate", onTime);
     };
-  }, [ring, sound, near]);
+  }, [ring, sound, near, me]);
 
   function togglePlay() {
     const el = ref.current;
@@ -102,6 +117,7 @@ export function VideoPlayer({ name, className = "", round = false, ring, control
     el.muted = !el.muted;
     userMuted.current = el.muted;
     setMuted(el.muted);
+    if (!el.muted) claimSound(me); // включили звук здесь — песня и другие видео замолкают
     if (!el.muted && el.paused) {
       userPaused.current = false;
       el.play();
