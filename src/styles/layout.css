@@ -203,7 +203,7 @@ html::-webkit-scrollbar{ display: none; }
 .care{ display: grid; grid-template-columns: 25vw 1fr; }
 .care-side{ position: relative; z-index: 6; display: flex; flex-direction: column; align-items: center; gap: 2vh; padding: 4vh 1vw 3vh 3vw; min-height: 0; }
 .care-side .ch-head{ align-self: stretch; margin-bottom: 0; }
-.care-meme{ margin: 0; flex: 1; min-height: 0; aspect-ratio: 9 / 11; max-width: 100%; transition: transform .35s ease, box-shadow .35s ease; transform-origin: 0 50%; box-shadow: 0 2.6vh 5vh -1.6vh rgba(0,0,0,.6); background: #fff; padding: .6vh; cursor: zoom-in; }
+.care-meme{ margin: 0; flex: none; width: min(100%, 34vh); aspect-ratio: 1; min-height: 0; overflow: hidden; transition: transform .35s ease, box-shadow .35s ease; transform-origin: 0 50%; box-shadow: 0 2.6vh 5vh -1.6vh rgba(0,0,0,.6); background: #fff; padding: .6vh; cursor: zoom-in; }
 .care-meme img{ display: block; width: 100%; height: 100%; object-fit: cover; object-position: 50% 0; }
 .care-meme:hover{ transform: scale(1.55); z-index: 20; position: relative; box-shadow: 0 5vh 10vh -3vh rgba(0,0,0,.8); }
 .care-stage{ position: relative; height: 100%; }

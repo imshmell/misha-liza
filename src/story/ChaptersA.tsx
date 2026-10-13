@@ -147,7 +147,7 @@ export function Dacha() {
     { k: c.photos[4] },
     { k: c.photos[7] },
   ];
-  const half = 5;
+  const half = 4; // 4 + 5: колонки с рукописными пометками выходят ровнее
   return (
     <Section id={c.id} tone="paper" className="dacha">
       <article className="dacha-card">

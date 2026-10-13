@@ -19,6 +19,7 @@ export function AudioProvider({ children }: { children: ReactNode }) {
   const [current, setCurrent] = useState<Track | null>(null);
   const [playing, setPlaying] = useState(false);
   const [missing, setMissing] = useState<Set<string>>(new Set());
+  const curKey = useRef("");
 
   useEffect(() => {
     const a = new Audio();
@@ -26,6 +27,19 @@ export function AudioProvider({ children }: { children: ReactNode }) {
     a.addEventListener("play", () => setPlaying(true));
     a.addEventListener("pause", () => setPlaying(false));
     a.addEventListener("ended", () => setPlaying(false));
+    // «не загружен» — только при настоящей ошибке файла (404 и т.п.), а не когда переключили трек во время загрузки
+    a.addEventListener("error", () => {
+      setPlaying(false);
+      if (curKey.current) setMissing((m) => new Set(m).add(curKey.current));
+    });
+    a.addEventListener("playing", () =>
+      setMissing((m) => {
+        if (!m.has(curKey.current)) return m;
+        const n = new Set(m);
+        n.delete(curKey.current);
+        return n;
+      })
+    );
     el.current = a;
     return () => a.pause();
   }, []);
@@ -40,10 +54,10 @@ export function AudioProvider({ children }: { children: ReactNode }) {
         return;
       }
       a.src = audioUrl(t.artist, t.title);
+      curKey.current = trackKey(t);
       setCurrent(t);
-      a.play().catch(() => {
-        setPlaying(false);
-        setMissing((m) => new Set(m).add(trackKey(t)));
+      a.play().catch((e: DOMException) => {
+        if (e.name !== "AbortError") setPlaying(false); // AbortError — просто нажали другой трек
       });
     },
     [current]
