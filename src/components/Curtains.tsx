@@ -1,6 +1,5 @@
 import { isMobile } from "@/lib/mobile";
 import { useEffect, useRef, type ReactNode } from "react";
-import * as THREE from "three";
 import gsap from "gsap";
 
 // 3D-кулисы: две сетки ткани, форму считает вершинный шейдер (сборка к подхвату, складки, волна, сквозняк),
@@ -103,8 +102,22 @@ export function Curtains({ children, delay = 0.9 }: { children: ReactNode; delay
     const el = stage.current;
     if (!el || isMobile()) return; // на телефоне без кулис (WebGL тяжёлый, глава длиннее экрана)
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // three грузим отдельным чанком; размонтировали до загрузки — ничего не строим
+    let cleanup: (() => void) | null = null;
+    let dead = false;
+    void import("./curtains-three").then((THREE) => {
+      if (dead) return;
+      cleanup = build(THREE, el);
+    });
+    return () => {
+      dead = true;
+      cleanup?.();
+    };
+  }, [delay]);
+
+  function build(THREE: typeof import("./curtains-three"), el: HTMLDivElement) {
+    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     renderer.domElement.className = "curtain-gl";
     el.appendChild(renderer.domElement);
 
@@ -179,12 +192,12 @@ export function Curtains({ children, delay = 0.9 }: { children: ReactNode; delay
       io.disconnect();
       ro.disconnect();
       geo.dispose();
-      (left.material as THREE.Material).dispose();
-      (right.material as THREE.Material).dispose();
+      left.material.dispose();
+      right.material.dispose();
       renderer.dispose();
       renderer.domElement.remove();
     };
-  }, [delay]);
+  }
 
   return (
     <div className="curtain-stage" ref={stage}>

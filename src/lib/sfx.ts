@@ -14,9 +14,6 @@ function fileFor(kind: "in" | "out") {
   a.load();
   return null;
 }
-// заранее проверить, есть ли настоящие файлы
-fileFor("in");
-fileFor("out");
 
 function synth(kind: "in" | "out") {
   ctx ??= new AudioContext();
@@ -53,6 +50,9 @@ function synth(kind: "in" | "out") {
 
 export function playTg(kind: "in" | "out") {
   try {
+    // есть ли настоящие файлы — проверяем при первом звуке (первый раз — синтез)
+    fileFor("in");
+    fileFor("out");
     const f = files[kind];
     if (f) {
       f.currentTime = 0;

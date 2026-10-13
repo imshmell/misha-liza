@@ -34,3 +34,6 @@ figma-prompt.txt
 CLAUDE.md
 LOG.md
 BACKLOG.md
+
+# кэш Python
+__pycache__/

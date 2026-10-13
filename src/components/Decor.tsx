@@ -6,6 +6,8 @@ export function Decor({ name, className = "", reveal = "drop" }: { name: string;
       alt=""
       aria-hidden="true"
       draggable={false}
+      loading="lazy"
+      decoding="async"
       className={`decor ${className}`}
       data-reveal={reveal}
     />

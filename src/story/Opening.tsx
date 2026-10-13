@@ -6,7 +6,6 @@ import { TrackList } from "@/components/TrackList";
 import { useAudio } from "@/components/AudioProvider";
 import { Vinyl } from "@/components/Vinyl";
 import { Img, Section } from "./Section";
-import { ch } from "./ChaptersA";
 
 export function Hero() {
   const { playing, toggle, current } = useAudio();
@@ -22,7 +21,7 @@ export function Hero() {
 
   return (
     <Section id="hero" tone="night" className="hero">
-      <Img src={photo("p1")} className="hero-bg" bw />
+      <Img src={photo("p1")} className="hero-bg" bw eager />
       <div className="hero-scrim" />
 
       <div className="hero-vinyl-slot" ref={vinyl}>
@@ -61,15 +60,8 @@ export function Hero() {
   );
 }
 
-// Сторона A — главы I–IV, сторона B — V–IX (как у пластинки); содержание сайта = треклист альбома
-const SIDES = [
-  { side: "A", ids: ["kazan", "run", "bridges", "october"] },
-  { side: "B", ids: ["dacha", "care", "circles", "everything", "year"] },
-];
-const plural = (n: number) => (n === 1 ? "трек" : n < 5 ? "трека" : "треков");
 
 export function Intro() {
-  const goto = (id: string) => window.dispatchEvent(new CustomEvent("goto", { detail: id }));
   return (
     <Section id="intro" tone="paper" className="intro">
       <div className="intro-left">
@@ -79,32 +71,6 @@ export function Intro() {
         <div className="intro-tracks" data-reveal="up">
           <TrackList tracks={INTRO.tracks} side="A" label="интро" bare />
         </div>
-        <nav className="intro-toc" aria-label="содержание" data-reveal="up">
-          {SIDES.map(({ side, ids }) => (
-            <div key={side} className="toc-side">
-              <span className="caps toc-head">сторона {side}</span>
-              <ol>
-                {ids.map((id) => {
-                  const c = ch(id);
-                  return (
-                    <li key={id}>
-                      <button type="button" onClick={() => goto(id)}>
-                        <span className="toc-n">{c.kicker}</span>
-                        <span className="toc-t">{c.title}</span>
-                        <span className="toc-dots" aria-hidden="true" />
-                        {c.tracks.length > 0 && (
-                          <span className="toc-c">
-                            {String(c.tracks.length).padStart(2, "0")} {plural(c.tracks.length)}
-                          </span>
-                        )}
-                      </button>
-                    </li>
-                  );
-                })}
-              </ol>
-            </div>
-          ))}
-        </nav>
       </div>
       <div className="intro-right">
         {INTRO.stories.map((k, i) => (

@@ -94,9 +94,11 @@ type Props = {
   sealLabel: string;
   onOut?: (rect: DOMRect) => void;
   letterSize?: [number, number];
+  /** true — остановить отрисовку (rAF не крутится) */
+  paused?: boolean;
 };
 
-export function Envelope3D({ play, letter, to, from, sealLabel, onOut, letterSize }: Props) {
+export function Envelope3D({ play, letter, to, from, sealLabel, onOut, letterSize, paused = false }: Props) {
   const host = useRef<HTMLDivElement>(null);
   const [letterEl] = useState(() => document.createElement("div"));
   const [size, setSize] = useState<[number, number] | null>(null);
@@ -104,18 +106,27 @@ export function Envelope3D({ play, letter, to, from, sealLabel, onOut, letterSiz
   const played = useRef(false);
   const onOutRef = useRef(onOut);
   onOutRef.current = onOut;
+  const pausedRef = useRef(paused);
+  pausedRef.current = paused;
+  const kick = useRef<(() => void) | null>(null); // перезапуск цикла после паузы
 
   // размер сцены (пересборка при ресайзе — геометрия считается в пикселях)
   useEffect(() => {
     const el = host.current;
     if (!el) return;
     let t = 0;
+    // тот же размер — не пересобирать сцену (первый вызов RO приходит с тем же размером)
+    const update = () => {
+      const w = el.clientWidth;
+      const h = el.clientHeight;
+      setSize((p) => (p && p[0] === w && p[1] === h ? p : [w, h]));
+    };
     const ro = new ResizeObserver(() => {
       clearTimeout(t);
-      t = window.setTimeout(() => setSize([el.clientWidth, el.clientHeight]), 120);
+      t = window.setTimeout(update, 120);
     });
     ro.observe(el);
-    setSize([el.clientWidth, el.clientHeight]);
+    update();
     return () => {
       clearTimeout(t);
       ro.disconnect();
@@ -577,25 +588,30 @@ export function Envelope3D({ play, letter, to, from, sealLabel, onOut, letterSiz
     let visible = false;
     const loop = () => {
       frame();
-      raf = visible ? requestAnimationFrame(loop) : 0;
+      raf = visible && !pausedRef.current ? requestAnimationFrame(loop) : 0;
     };
+    const start = () => {
+      if (visible && !raf && !pausedRef.current) raf = requestAnimationFrame(loop);
+    };
+    kick.current = start;
     const io = new IntersectionObserver(([e]) => {
       visible = e.isIntersecting;
-      if (visible && !raf) raf = requestAnimationFrame(loop);
+      start();
     });
     io.observe(el);
-    frame();
+    if (!pausedRef.current) frame();
 
     // шрифты в текстурах (адрес, «Lover», штемпель) — перерисовать, когда загрузятся
     let alive = true;
     Promise.all(["40px Caveat", '600 20px "EB Garamond"'].map((f) => document.fonts.load(f))).then(() => {
       if (!alive) return;
       redraws.forEach((r) => r());
-      frame();
+      if (!pausedRef.current) frame();
     });
 
     return () => {
       alive = false;
+      kick.current = null;
       cancelAnimationFrame(raf);
       io.disconnect();
       window.removeEventListener("pointermove", onMove);
@@ -603,11 +619,18 @@ export function Envelope3D({ play, letter, to, from, sealLabel, onOut, letterSiz
       disposables.forEach((d) => d.dispose());
       glBack.dispose();
       glFront.dispose();
+      glBack.forceContextLoss();
+      glFront.forceContextLoss();
       glBack.domElement.remove();
       glFront.domElement.remove();
       css.domElement.remove();
     };
   }, [size, letterEl, st, to, from, sealLabel, letterSize]);
+
+  // сняли с паузы — цикл снова крутится (на паузе loop сам не перезапускает rAF)
+  useEffect(() => {
+    if (!paused) kick.current?.();
+  }, [paused]);
 
   // анимация вскрытия — один раз; состояние в st переживает пересборку сцены
   useEffect(() => {
@@ -628,3 +651,5 @@ export function Envelope3D({ play, letter, to, from, sealLabel, onOut, letterSiz
     </div>
   );
 }
+
+export default Envelope3D;

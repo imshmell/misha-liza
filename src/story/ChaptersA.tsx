@@ -35,7 +35,7 @@ export function Kazan() {
         </div>
       </div>
       <div className="kazan-reel" data-reveal="fade">
-        <FilmReel items={frames} label={`${c.photos.length} фото · ${c.videos.length} видео · наведи — остановится`} />
+        <FilmReel items={frames} />
       </div>
     </Section>
   );

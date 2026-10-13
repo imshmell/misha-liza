@@ -20,8 +20,19 @@ export function AutoScroll({ children, className = "", speed = 30 }: { children:
     let lastY = 0;
     let vel = 0; // px/s инерция после броска
 
-    const io = new IntersectionObserver(([e]) => (visible = e.isIntersecting), { threshold: 0.5 });
-    io.observe(el);
+    // вне экрана цикл стоит; снова запускаем, когда лента видна
+    const start = () => {
+      if (raf) return;
+      last = 0;
+      raf = requestAnimationFrame(tick);
+    };
+    const io = new IntersectionObserver(
+      ([e]) => {
+        visible = e.isIntersecting;
+        if (visible) start();
+      },
+      { threshold: 0.5 }
+    );
 
     const max = () => el.scrollHeight - el.clientHeight;
     const clamp = (v: number) => Math.max(0, Math.min(max(), v));
@@ -36,6 +47,7 @@ export function AutoScroll({ children, className = "", speed = 30 }: { children:
       el.setPointerCapture(e.pointerId);
       el.classList.add("is-dragging");
       e.preventDefault();
+      start();
     };
     const onMove = (e: PointerEvent) => {
       if (!dragging) return;
@@ -79,9 +91,9 @@ export function AutoScroll({ children, className = "", speed = 30 }: { children:
         }
         el.scrollTop = pos;
       }
-      raf = requestAnimationFrame(tick);
+      raf = !visible && !dragging && Math.abs(vel) <= 5 ? 0 : requestAnimationFrame(tick);
     };
-    raf = requestAnimationFrame(tick);
+    io.observe(el);
 
     return () => {
       cancelAnimationFrame(raf);

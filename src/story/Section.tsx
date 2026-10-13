@@ -45,10 +45,18 @@ export function ChapterHead({ kicker, title, light, meta }: ChapterHeadProps) {
 
 export { tracksMeta };
 
-export function Img({ src, alt = "", className = "", bw = false }: { src: string; alt?: string; className?: string; bw?: boolean }) {
+// eager — для первого экрана (hero): грузить сразу и с высоким приоритетом
+export function Img({ src, alt = "", className = "", bw = false, eager = false }: { src: string; alt?: string; className?: string; bw?: boolean; eager?: boolean }) {
   return (
     <div className={`img-wrap grain ${className}`}>
-      <img src={src} alt={alt} loading="lazy" decoding="async" className={`img-cover ${bw ? "graded-bw" : "graded"}`} />
+      <img
+        src={src}
+        alt={alt}
+        loading={eager ? "eager" : "lazy"}
+        fetchPriority={eager ? "high" : undefined}
+        decoding="async"
+        className={`img-cover ${bw ? "graded-bw" : "graded"}`}
+      />
     </div>
   );
 }

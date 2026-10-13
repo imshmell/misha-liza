@@ -3,7 +3,6 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 
-import { SvgDefs } from "@/components/SvgDefs";
 import { Preloader } from "@/components/Preloader";
 import { AudioProvider } from "@/components/AudioProvider";
 import { NowPlaying } from "@/components/NowPlaying";
@@ -151,7 +150,6 @@ function App() {
   return (
     <AudioProvider>
       <Preloader />
-      <SvgDefs />
       <nav className="chapter-nav" aria-label="главы">
         {NAV.map((n, i) => (
           <button key={n.id} type="button" className={i === active ? "active" : ""} onClick={() => goTo(n.id)}>

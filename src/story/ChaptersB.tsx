@@ -1,10 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { lazy, Suspense, useCallback, useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { CARE_LIST, FINALE, POSTSCRIPT, START_DATE } from "@/lib/story";
 import { photo, video as videoUrl } from "@/lib/media";
 import { TrackList } from "@/components/TrackList";
 import { VideoPlayer } from "@/components/VideoPlayer";
-import { Envelope3D } from "@/components/Envelope3D";
+// three.js грузится только к главе с конвертом (и никогда на телефоне)
+const Envelope3D = lazy(() => import("@/components/Envelope3D"));
 import { Decor } from "@/components/Decor";
 import { playTg } from "@/lib/sfx";
 import { useAudio } from "@/components/AudioProvider";
@@ -12,6 +13,7 @@ import { Confetti, type ConfettiRef } from "@/components/ui/confetti";
 import { ChapterHead, Img, Section, tracksMeta } from "./Section";
 import { ch } from "./ChaptersA";
 import { isMobile } from "@/lib/mobile";
+import { useMarquee } from "@/lib/useMarquee";
 
 function useOnceVisible<T extends HTMLElement>(threshold = 0.5) {
   const ref = useRef<T>(null);
@@ -81,6 +83,9 @@ export function Care() {
   const [mobile] = useState(isMobile);
   const [opened, setOpened] = useState(mobile);
   const [size, setSize] = useState<[number, number] | null>(null);
+  // 3D-сцену строим, когда глава в пределах экрана; после раскрытия письма — останавливаем
+  const [nearRef, near] = useOnceVisible<HTMLDivElement>(0);
+  const [hidden, setHidden] = useState(false);
 
   // размер полного письма — по нему строится письмо в конверте (то же, уменьшенное)
   useEffect(() => {
@@ -98,7 +103,7 @@ export function Care() {
     if (!el || !stage) return;
     setOpened(true);
     const f = el.getBoundingClientRect();
-    gsap.to(stage.querySelector(".env3d"), { yPercent: 40, opacity: 0, duration: 1.3, ease: "power2.in", delay: 0.15 });
+    gsap.to(stage.querySelector(".env3d"), { yPercent: 40, opacity: 0, duration: 1.3, ease: "power2.in", delay: 0.15, onComplete: () => setHidden(true) });
     gsap.fromTo(
       el,
       { x: r.left - f.left, y: r.top - f.top, scaleX: r.width / f.width, scaleY: r.height / f.height, opacity: 1, visibility: "visible" },
@@ -108,6 +113,7 @@ export function Care() {
 
   return (
     <Section id={c.id} tone="burgundy" className="care">
+      <div ref={nearRef} className="care-near" aria-hidden="true" />
       <div className="care-side">
         <ChapterHead kicker={c.kicker} title={c.title} light meta={tracksMeta(c.tracks.length)} />
         {/* скриншоты с текстом — крупно, при наведении ещё крупнее */}
@@ -118,8 +124,10 @@ export function Care() {
         ))}
       </div>
       <div className={`care-stage ${opened ? "is-open" : ""}`} ref={stageRef}>
-        {size && !mobile && (
+        {size && !mobile && near && (
+          <Suspense fallback={null}>
           <Envelope3D
+            paused={hidden}
             play={seen}
             onOut={onOut}
             letterSize={size}
@@ -132,6 +140,7 @@ export function Care() {
               </div>
             }
           />
+          </Suspense>
         )}
         <div className="care-letter" ref={full}>
           <CareLetterBody live={opened} />
@@ -146,7 +155,7 @@ const CIRCLE_LEN = ["0:17", "0:07"];
 
 export function Circles() {
   const c = ch("circles");
-  const [chatRef, seen] = useOnceVisible<HTMLDivElement>(0.5);
+  const [chatRef, seen] = useOnceVisible<HTMLDivElement>(0.3);
   const status = useRef<HTMLSpanElement>(null);
 
   useEffect(() => {
@@ -157,7 +166,7 @@ export function Circles() {
     const reacts = root.querySelectorAll(".tg-react");
     // «записывает видео…» → кружочек → её ответ → ещё кружочек; реакции всплывают
     gsap
-      .timeline({ delay: 0.4 })
+      .timeline({ delay: 0.2 })
       .call(() => playTg("in"))
       .to(msgs[0], {
         opacity: 1,
@@ -184,7 +193,7 @@ export function Circles() {
       .to(
         msgs[2],
         { opacity: 1, y: 0, scale: 1, duration: 0.7, ease: "back.out(1.4)" },
-        "+=1.1",
+        "+=0.5",
       )
       .call(() => playTg("in"), undefined, "<")
       .call(() => status.current && (status.current.textContent = "в сети"))
@@ -293,23 +302,8 @@ export function Everything() {
     { k: c.photos[3], cls: "sb-7" },
     { v: c.videos[3], cls: "sb-8" },
   ];
-  // бесконечная лента в одну сторону: кадры продублированы, сдвиг ровно на один набор
-  const strip = useRef<HTMLDivElement>(null);
-  useEffect(() => {
-    const el = strip.current;
-    if (!el) return;
-    const track = el.firstElementChild as HTMLElement;
-    const fit = () => {
-      const half = track.children[items.length] as HTMLElement | undefined;
-      if (!half) return;
-      const set = half.offsetLeft - (track.children[0] as HTMLElement).offsetLeft;
-      track.style.setProperty("--sb-set", `${set}px`);
-      track.style.setProperty("--sb-dur", `${Math.max(10, set / 60)}s`);
-    };
-    const ro = new ResizeObserver(fit);
-    ro.observe(track);
-    return () => ro.disconnect();
-  }, [items.length]);
+  // бесконечная лента: едет вправо сама, тянется мышью/пальцем
+  const strip = useMarquee<HTMLDivElement>(60, 1);
 
   return (
     <Section id={c.id} tone="paper" className="everything">
@@ -324,7 +318,7 @@ export function Everything() {
         </div>
       </div>
       <div className="sb-strip" ref={strip} data-reveal="fade">
-        <div className="sb-strip-track">
+        <div className="sb-strip-track" data-track>
           {[...items, ...items].map((it, i) => (
             <figure key={i} className={`sb-item ${it.cls} ${it.v ? "sb-video" : "sb-photo"}`} aria-hidden={i >= items.length || undefined}>
               {it.v ? <VideoPlayer name={it.v} /> : <Img src={photo(it.k!)} />}

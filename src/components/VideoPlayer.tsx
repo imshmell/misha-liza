@@ -28,11 +28,28 @@ export function VideoPlayer({ name, className = "", round = false, ring, control
   const [progress, setProgress] = useState(0);
   const userPaused = useRef(false);
   const userMuted = useRef(false);
+  const [near, setNear] = useState(false);
   const { src, poster } = videoUrl(name);
+
+  // ничего не качаем, пока видео не подъехало к экрану (за экран до него)
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || near) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (!entry.isIntersecting) return;
+        setNear(true);
+        io.disconnect();
+      },
+      { rootMargin: "100% 100%" } // и по горизонтали — кадры в лентах едут сбоку
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [near]);
 
   useEffect(() => {
     const el = ref.current;
-    if (!el) return;
+    if (!el || !near) return; // src ещё не выставлен — play() бы упал
     const playMuted = () => {
       el.muted = true;
       setMuted(true);
@@ -63,7 +80,7 @@ export function VideoPlayer({ name, className = "", round = false, ring, control
       io.disconnect();
       el.removeEventListener("timeupdate", onTime);
     };
-  }, [ring, sound]);
+  }, [ring, sound, near]);
 
   function togglePlay() {
     const el = ref.current;
@@ -103,7 +120,7 @@ export function VideoPlayer({ name, className = "", round = false, ring, control
         </svg>
       )}
       <div className={`vp ${round ? "vp-round" : ""}`}>
-        <video ref={ref} src={src} poster={poster} muted loop playsInline preload="metadata" style={{ objectFit: fit }} onClick={togglePlay} />
+        <video ref={ref} src={near ? src : undefined} poster={near ? poster : undefined} muted loop playsInline preload="none" style={{ objectFit: fit }} onClick={togglePlay} />
         {controls && (
           <div className="vp-controls">
             {controls === true && (
