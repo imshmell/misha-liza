@@ -125,7 +125,11 @@
 .np-text em{ font-family: 'Cormorant Garamond', serif; font-size: 14px; opacity: .7; }
 .np-btn{ width: 38px; height: 38px; border-radius: 50%; border: none; background: #C21807; color: #F1E9D8; display: grid; place-items: center; cursor: pointer; flex-shrink: 0; }
 .np-btn svg{ width: 14px; height: 14px; fill: currentColor; }
-.np-close{ background: none; border: none; color: #F1E9D8; opacity: .55; font-size: 20px; cursor: pointer; padding: 0 6px; }
+/* закрыть: круглая кнопка в тон плееру (тонкое золотое кольцо, рисованный крестик) */
+.np-close{ width: 34px; height: 34px; flex-shrink: 0; margin-right: 2px; padding: 0; border-radius: 50%; display: grid; place-items: center; cursor: pointer;
+  background: transparent; border: 1px solid rgba(168,128,63,.45); color: rgba(241,233,216,.75); transition: background .2s ease, color .2s ease, border-color .2s ease; }
+.np-close:hover{ background: rgba(241,233,216,.1); border-color: rgba(201,163,90,.9); color: #F1E9D8; }
+.np-close svg{ width: 12px; height: 12px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linecap: round; }
 
 /* ===== Кулисы (драпировка с подхватами) ===== */
 .curtain-stage{ position: absolute; inset: 0; overflow: hidden; }

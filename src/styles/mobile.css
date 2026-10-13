@@ -184,7 +184,8 @@
   /* «сейчас играет» — по ширине экрана */
   .now-playing{ left: 12px; right: 12px; bottom: 12px; max-width: none; }
   .np-btn{ width: 44px; height: 44px; }
-  .np-close{ min-width: 44px; min-height: 44px; padding: 0; display: grid; place-items: center; }
+  .np-close{ width: 40px; height: 40px; } /* под палец */
+  .np-close svg{ width: 13px; height: 13px; }
   .np-label{ font-size: 10.5px; letter-spacing: .22em; }
   /* плашка не закрывает подвал и низ P.S. */
   body:has(.now-playing) .ps{ padding-bottom: calc(210px + 10vw); } /* +10vw — сдвиг второго полароида */
