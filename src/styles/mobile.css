@@ -37,13 +37,13 @@
 
   /* ===== Обложка ===== */
   /* фото — сверху блоком: кадр по ширине телефона так, чтобы видны оба лица (Миша ~32%, Лиза ~59% ширины кадра) */
-  .hero{ height: 100svh; min-height: 560px; background: var(--night); }
-  .hero-bg{ inset: 0 0 auto 0 !important; height: 56svh; }
-  .hero-bg img{ object-position: 41% 30%; }
-  .hero-scrim{ inset: 0 0 auto 0; height: 56svh; background: linear-gradient(180deg, rgba(28,8,9,.4) 0%, rgba(28,8,9,0) 22%, rgba(28,8,9,0) 70%, var(--night) 100%); }
-  .hero-vinyl-slot{ width: 40vw; right: -12vw; top: calc(56svh - 26vw); z-index: 4; } /* на стыке фото и текста — ниже лиц */
+  .hero{ height: calc(66svh + 150px); min-height: 0; background: var(--night); } /* фото + имена под ним, без пустого бордового поля */
+  .hero-bg{ inset: 0 0 auto 0 !important; height: 66svh; } /* фото почти на весь экран — без пустого бордового поля */
+  .hero-bg img{ object-position: 43% 30%; } /* оба лица в кадре */
+  .hero-scrim{ inset: 0 0 auto 0; height: 66svh; background: linear-gradient(180deg, rgba(28,8,9,.4) 0%, rgba(28,8,9,0) 22%, rgba(28,8,9,0) 70%, var(--night) 100%); }
+  .hero-vinyl-slot{ width: 40vw; right: -12vw; top: calc(66svh - 30vw); z-index: 4; } /* на стыке фото и текста — ниже лиц */
   .hero-est{ left: var(--m-pad); top: 4svh; font-size: 11px; }
-  .hero-copy{ left: var(--m-pad); right: var(--m-pad); bottom: 6svh; }
+  .hero-copy{ left: var(--m-pad); right: var(--m-pad); bottom: 28px; } /* имена заходят на низ фото */
   .hero-kicker{ font-size: 12px; letter-spacing: .2em; line-height: 1.6; }
   .hero-names{ font-size: min(14.5vw, 66px); white-space: nowrap; line-height: .95; } /* «Миша & Лиза» в одну строку */
   .hero-sub{ flex-direction: column; align-items: flex-start; gap: 18px; margin-top: 18px; }
