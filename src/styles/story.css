@@ -15,6 +15,7 @@
 .graded{ filter: sepia(.14) saturate(.92) contrast(1.06) brightness(.97); }
 .graded-bw{ filter: grayscale(1) contrast(1.12) brightness(.96); }
 .grain{ position: relative; }
+.grain::after{ display: none !important; } /* без «клеточки» — фото чистые (правка заказчицы) */
 .grain::after{
   content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 2;
   opacity: .5; /* зерно тише — без «точек» */

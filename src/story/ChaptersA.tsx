@@ -102,6 +102,10 @@ export function Bridges() {
             <div className="bridges-video">
               <VideoPlayer name={c.videos[0]} />
             </div>
+            {/* только на телефоне: видео ночного развода в галерее вместо фона */}
+            <div className="bridges-video bridges-video-m">
+              <VideoPlayer name={c.videos[1]} />
+            </div>
           </div>
         </div>
       </Curtains>
@@ -115,8 +119,15 @@ export function October() {
     <Section id={c.id} tone="burgundy" className="october">
       <div className="oct-left">
         <ChapterHead kicker={c.kicker} title={c.title} light meta={tracksMeta(c.tracks.length)} />
-        <div className="october-date" data-reveal="up">
-          17<span>.</span>10
+        <div className="october-date-row" data-reveal="up">
+          <div className="october-date">
+            17<span>.</span>10
+          </div>
+          {/* стиральная машинка — с неё всё и началось */}
+          <svg className="washer" viewBox="0 0 90 100" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+            <rect x="5" y="5" width="80" height="90" rx="8" /><path d="M5 26h80" /><circle cx="18" cy="15" r="3" /><circle cx="30" cy="15" r="3" />
+            <rect x="56" y="11" width="20" height="8" rx="2" /><circle cx="45" cy="60" r="23" /><circle cx="45" cy="60" r="15" strokeDasharray="3 4" />
+          </svg>
         </div>
         {c.paragraphs.map((p, i) => (
           <p key={i} className={i ? "body" : "lead"} data-reveal="up">

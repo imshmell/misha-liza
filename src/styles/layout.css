@@ -16,8 +16,8 @@
   --gold: #A8803F;
   --gold-l: #C9A35A;
   --cream: #F1E9D8;
-  --fs-lead: clamp(15px, 2.5vh, 28px);
-  --fs-body: clamp(15px, 2.3vh, 25px);
+  --fs-lead: clamp(16px, 2.75vh, 31px);
+  --fs-body: clamp(16px, 2.55vh, 28px);
 }
 html.lenis, html.lenis body{ height: auto; }
 .lenis.lenis-smooth{ scroll-behavior: auto !important; }
@@ -41,9 +41,9 @@ body{ background: var(--cream); color: var(--wine-deep); font-family: var(--font
 }
 .ch-head-light .ch-title{ color: var(--cream); }
 .ch-head-light .ch-kicker{ color: var(--gold-l); }
-.lead{ font-size: var(--fs-lead); line-height: 1.5; margin-bottom: 1.4vh; }
-.body{ font-size: var(--fs-body); line-height: 1.5; margin-bottom: 1.4vh; color: #3d1414; }
-.lead-light{ color: rgba(241,233,216,.94); }
+.lead{ font-size: var(--fs-lead); font-weight: 500; line-height: 1.5; margin-bottom: 1.4vh; } /* Cormorant 500 — плотнее, текст не теряется */
+.body{ font-size: var(--fs-body); font-weight: 500; line-height: 1.5; margin-bottom: 1.4vh; color: #331010; }
+.lead-light{ color: #F6EFE2; }
 .pink{ color: var(--pink) !important; }
 
 /* ===== Фото-примитивы ===== */
@@ -72,7 +72,7 @@ body{ background: var(--cream); color: var(--wine-deep); font-family: var(--font
 .hero-est{ position: absolute; z-index: 7; left: 5vw; top: 6vh; color: var(--cream); font-size: clamp(11px, 1.8vh, 15px); letter-spacing: .32em; text-shadow: 0 1px 12px rgba(20,4,6,.9); }
 .hero-kicker{ color: var(--pink); margin-bottom: 14px; }
 .hero-names{ font-family: var(--font-display); font-weight: 400; font-size: min(9.4vw, 17vh); line-height: .9; letter-spacing: -.02em; color: var(--cream); white-space: nowrap; }
-.hero-amp{ font-style: italic; color: var(--red); }
+.hero-amp{ font-family: var(--font-serif-caps); font-style: normal; font-size: .5em; vertical-align: .18em; margin: 0 .08em; color: var(--red); } /* обычный амперсанд, вдвое меньше */
 .hero-sub{ display: flex; align-items: center; gap: 3vw; margin-top: 3.4vh; flex-wrap: wrap; }
 .hero-sub-script{ font-size: clamp(30px, 6vh, 56px); color: var(--pink); line-height: 1; }
 .hero-side{ position: absolute; z-index: 6; right: 8vw; bottom: 12vh; display: flex; flex-direction: column; align-items: center; gap: 2.4rem; }
@@ -170,8 +170,12 @@ body{ background: var(--cream); color: var(--wine-deep); font-family: var(--font
 
 /* ===== IV. 17 октября ===== */
 .october{ display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6vw; align-items: center; padding: 6vh 8vw 6vh 7vw; }
-.october-date{ font-family: var(--font-display); font-weight: 400; font-size: min(14vw, 27vh); line-height: .9; letter-spacing: -.03em; color: var(--cream); margin: 0 0 5vh -.4vw; }
-.october .ch-title{ display: none; } /* «17 октября» = дата крупно, заголовок не дублируем */
+.october-date{ font-family: var(--font-display); font-weight: 400; font-size: min(9.5vw, 18vh); line-height: .9; letter-spacing: -.03em; color: var(--cream); margin: 0 0 5vh -.4vw; }
+.october-date-row{ display: flex; align-items: flex-end; gap: 2.4vw; }
+.october-date-row .october-date{ margin-bottom: 0; }
+.october-date-row{ margin-bottom: 4vh; }
+.washer{ width: min(6vw, 11vh); height: auto; color: var(--pink); margin-bottom: 1.2vh; flex: none; }
+.october .lead{ font-size: clamp(17px, 3vh, 34px); }
 .october-date span{ color: var(--pink); }
 .october .lead{ color: var(--cream); }
 .october .body{ color: rgba(241,233,216,.93); }
@@ -223,9 +227,9 @@ html::-webkit-scrollbar{ display: none; }
 .cl-photos figure{ margin: 0; min-width: 0; }
 .letter-intro{ font-family: var(--font-display); font-style: italic; font-size: clamp(16px, 2.7vh, 30px); line-height: 1.22; color: var(--wine); margin-bottom: 1.2vh; }
 .letter-list{ list-style: none; margin: 0; padding: 0; }
-.letter-list li{ position: relative; padding-left: 1.3em; font-size: clamp(13px, min(2.15vh, 1.3vw), 21px); line-height: 1.3; }
-.letter-list li::before{ content: '—'; position: absolute; left: 0; color: var(--red); }
-.letter-accent{ font-size: clamp(18px, 3vh, 34px); line-height: 1.2; color: var(--wine); margin-bottom: 2vh; }
+.letter-list li{ position: relative; padding-left: 0; font-weight: 500; margin-bottom: .55vh; font-size: clamp(13px, min(2.15vh, 1.3vw), 21px); line-height: 1.3; }
+.letter-list li::before{ content: none; } /* без тире — не «перечисление заслуг» */
+.letter-accent{ font-family: var(--font-body); font-weight: 500; font-size: clamp(17px, 2.9vh, 32px); line-height: 1.4; color: var(--wine); margin-bottom: 2vh; }
 .care-stage.is-open .env3d{ pointer-events: none; }
 
 /* 3D-конверт (Envelope3D): canvas «зад» → письмо (CSS3D) → canvas «перед» */
@@ -352,7 +356,7 @@ html::-webkit-scrollbar{ display: none; }
 .finale-photo .img-wrap{ position: absolute; inset: 0; }
 .finale-cosmos{ position: absolute; z-index: 1; right: -7vw; bottom: -15vh; width: min(19vw, 32vh); transform: rotate(-16deg); }
 .finale-body{ position: relative; z-index: 2; padding: 8vh 6vw 8vh 5vw; display: flex; flex-direction: column; justify-content: center; }
-.finale-love{ font-size: min(9vw, 16vh); line-height: 1; color: var(--pink); margin: .6vh 0 3vh; }
+.finale-love{ font-size: min(6.6vw, 13vh); white-space: nowrap; line-height: 1; color: var(--pink); margin: .6vh 0 3vh; } /* в одну строку */
 .finale-counters{ display: flex; align-items: flex-end; gap: 2.4vw; margin-bottom: 3.6vh; }
 .finale-counters div{ display: flex; flex-direction: column; }
 .finale-counters b{ font-family: var(--font-display); font-weight: 400; font-size: clamp(24px, 4.6vh, 48px); line-height: 1; color: var(--cream); }
@@ -373,7 +377,7 @@ html::-webkit-scrollbar{ display: none; }
 .ps{ display: grid; grid-template-columns: 40% 60%; align-items: center; padding: 6vh 7vw 12vh; gap: 2vw; }
 .ps-text-col{ position: relative; }
 .ps-mark{ font-size: clamp(56px, 14vh, 140px); line-height: 1; color: var(--red); }
-.ps-text{ font-family: var(--font-display); font-style: italic; font-size: clamp(20px, 3.8vh, 40px); line-height: 1.3; color: var(--wine); margin-top: 2vh; }
+.ps-text{ font-family: var(--font-body); font-weight: 500; font-size: clamp(20px, 3.6vh, 38px); line-height: 1.4; color: var(--wine); margin-top: 2vh; } /* как основной текст, без курсива */
 .ps-photos{ position: relative; display: flex; justify-content: center; }
 .ps-pol{ width: min(28vw, 50vh); z-index: 1; }
 .ps-pol-0{ transform: rotate(-4deg); }
@@ -411,3 +415,9 @@ html::-webkit-scrollbar{ display: none; }
 .reel, .sb-strip{ cursor: grab; user-select: none; }
 .reel.is-dragging, .sb-strip.is-dragging{ cursor: grabbing; }
 .reel img, .sb-strip img{ -webkit-user-drag: none; }
+
+/* правки заказчицы, раунд 2 */
+.sr-only{ position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; } /* заголовки глав убраны визуально */
+.bridges-video-m{ display: none; } /* на десктопе видео мостов — фоном */
+.dacha-card .lead, .dacha-card .body{ font-size: clamp(15px, 2.45vh, 27px); font-weight: 500; }
+.sb-card .body{ font-size: clamp(15px, 2.45vh, 27px); }

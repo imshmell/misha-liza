@@ -8,10 +8,8 @@ import { Vinyl } from "@/components/Vinyl";
 import { Img, Section } from "./Section";
 
 export function Hero() {
-  const { playing, toggle, current } = useAudio();
+  const { playing } = useAudio();
   const vinyl = useRef<HTMLDivElement>(null);
-  const first = INTRO.tracks[0];
-  const firstPlaying = playing && current?.title === first.title;
 
   useEffect(() => {
     // пластинка выкатывается из-за края, фото медленно "наезжает" (Ken Burns)
@@ -31,27 +29,11 @@ export function Hero() {
       <span className="caps hero-est">est. 17 · 10 · 2025</span>
 
       <div className="hero-copy">
-        <p className="caps hero-kicker" data-reveal="up">первая годовщина · музыкальный фотомемуар</p>
         <h1 className="hero-names" data-reveal="up">
-          Миша <span className="hero-amp">&amp;</span> Елизавета
+          Миша <span className="hero-amp">&amp;</span> Лиза
         </h1>
         <div className="hero-sub" data-reveal="up">
-          <span className="scr hero-sub-script">плейлист нашей истории</span>
-        <button type="button" className="hero-play" onClick={() => toggle(first)}>
-            <span className="hero-play-btn">
-              {firstPlaying ? (
-                <svg viewBox="0 0 16 16"><rect x="3" y="2" width="3.5" height="12" rx="1" /><rect x="9.5" y="2" width="3.5" height="12" rx="1" /></svg>
-              ) : (
-                <svg viewBox="0 0 16 16"><path d="M5 3v10l8-5z" /></svg>
-              )}
-            </span>
-            <span>
-              <span className="caps">слушать сторону A</span>
-              <b>
-                {first.title} — <em>{first.artist}</em>
-              </b>
-            </span>
-          </button>
+          <span className="scr hero-sub-script">музыкальный фотомемуар</span>
         </div>
       </div>
 

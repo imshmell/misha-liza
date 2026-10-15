@@ -38,7 +38,7 @@ export function ChapterHead({ kicker, title, light, meta }: ChapterHeadProps) {
         глава {kicker}
         {meta}
       </span>
-      <h2 className="ch-title">{title}</h2>
+      <h2 className="sr-only">{title}</h2>
     </header>
   );
 }

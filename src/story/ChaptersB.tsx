@@ -61,7 +61,7 @@ function CareLetterBody({ live }: { live: boolean }) {
         {live ? <VideoPlayer name={c.videos[0]} /> : <img src={videoUrl(c.videos[0]).poster} alt="" />}
       </div>
       <div className="cl-right">
-        <p className="letter-accent scr">{c.paragraphs[1]}</p>
+        <p className="letter-accent">{c.paragraphs[1]}</p>
         <TrackList tracks={c.tracks} side="B" label={c.title} bare />
       </div>
       <div className="cl-photos">
@@ -213,10 +213,6 @@ export function Circles() {
           light
           meta=" · видеосообщения"
         />
-        <div className="circles-count" data-reveal="up">
-          <span className="circles-num">2</span>
-          <span className="caps">кружочка · {CIRCLE_LEN.join(" + ")}</span>
-        </div>
         <Decor name="cats" className="circles-cats" />
       </div>
 
@@ -431,7 +427,6 @@ export function Finale() {
             </svg>
           </span>
           <span>
-            <span className="caps">последний трек</span>
             <b>
               {FINALE.track.title} — <em>{FINALE.track.artist}</em>
             </b>
@@ -466,9 +461,9 @@ export function PostScript() {
         <Decor name="cherries" className="ps-cherries" />
       </div>
       <footer className="site-foot">
-        <span className="caps">М &amp; Е</span>
+        <span className="caps">М &amp; Л</span>
         <span className="caps">
-          {fmt(START_DATE)} — {fmt(ANNIVERSARY)}
+          {fmt(START_DATE)}
         </span>
         <span className="caps">конец стороны B</span>
       </footer>
