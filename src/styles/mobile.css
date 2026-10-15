@@ -81,12 +81,12 @@
   .curtain-stage, .curtain-content{ position: relative; }
   .curtain-gl, .curtain-valance, .curtain-holder{ display: none; }
   .bridges-layout{ position: relative; display: flex; flex-direction: column; gap: 24px; padding: 9svh var(--m-pad) 8svh; }
-  .bridges-media{ container-type: normal; flex-wrap: wrap; gap: 12px; padding: 0; }
-  .bridges-ph, .bridges-video{ height: auto; }
-  .bridges-ph-w{ width: 100%; }
-  .bridges-media{ align-items: flex-start; }
-  .bridges-ph:not(.bridges-ph-w){ flex: 4 1 0; width: auto; } /* 3:4 и 9:16 одной высоты: ширины 4:3 */
-  .bridges-video{ flex: 3 1 0; width: auto; }
+  /* широкое фото → два вертикальных видео в ряд (крупно) → вертикальное фото */
+  .bridges-media{ container-type: normal; display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 0; align-items: start; }
+  .bridges-ph, .bridges-video{ height: auto; width: auto; }
+  .bridges-ph-w{ grid-column: 1 / -1; order: 0; }
+  .bridges-video{ order: 1; }
+  .bridges-ph:not(.bridges-ph-w){ grid-column: 1 / -1; order: 2; }
   .bridges-bg .vp-controls{ right: 16px; top: 16px; bottom: auto; } /* звук фона — в правом верхнем углу главы */
 
   /* ===== IV. 17 октября ===== */
